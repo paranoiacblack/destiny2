@@ -10,8 +10,6 @@ import (
 type Contract interface {
 	// Name is the name of this contract in the Bungie.Net API.
 	Name() string
-	// TableName is the name of this contract in the Mobile Manifest Table.
-	TableName() string
 	// Reference is a link to the Bungie.Net API which describes this contract.
 	Reference() string
 	// Entity returns a specific entity from this contract with a given hash.
@@ -30,10 +28,6 @@ type InventoryItemDefinition map[uint32]InventoryItemEntity
 
 func (InventoryItemDefinition) Name() string {
 	return "DestinyInventoryItemDefinition"
-}
-
-func (InventoryItemDefinition) TableName() string {
-	return "Items"
 }
 
 func (InventoryItemDefinition) Reference() string {
@@ -69,10 +63,6 @@ func (ProgressionDefinition) Name() string {
 	return "DestinyProgressionDefinition"
 }
 
-func (ProgressionDefinition) TableName() string {
-	return "Progressions"
-}
-
 func (ProgressionDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyProgressionDefinition"
 }
@@ -104,10 +94,6 @@ type InventoryBucketDefinition map[uint32]InventoryBucketEntity
 
 func (InventoryBucketDefinition) Name() string {
 	return "DestinyInventoryBucketDefinition"
-}
-
-func (InventoryBucketDefinition) TableName() string {
-	return "InventoryBuckets"
 }
 
 func (InventoryBucketDefinition) Reference() string {
@@ -143,10 +129,6 @@ func (ItemTierTypeDefinition) Name() string {
 	return "DestinyItemTierTypeDefinition"
 }
 
-func (ItemTierTypeDefinition) TableName() string {
-	return "ItemTierTypes"
-}
-
 func (ItemTierTypeDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyItemTierTypeDefinition"
 }
@@ -178,10 +160,6 @@ type StatDefinition map[uint32]StatEntity
 
 func (StatDefinition) Name() string {
 	return "DestinyStatDefinition"
-}
-
-func (StatDefinition) TableName() string {
-	return "Stats"
 }
 
 func (StatDefinition) Reference() string {
@@ -217,10 +195,6 @@ func (StatGroupDefinition) Name() string {
 	return "DestinyStatGroupDefinition"
 }
 
-func (StatGroupDefinition) TableName() string {
-	return "StatGroups"
-}
-
 func (StatGroupDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyStatGroupDefinition"
 }
@@ -252,10 +226,6 @@ type EquipmentSlotDefinition map[uint32]EquipmentSlotEntity
 
 func (EquipmentSlotDefinition) Name() string {
 	return "DestinyEquipmentSlotDefinition"
-}
-
-func (EquipmentSlotDefinition) TableName() string {
-	return "EquipmentSlots"
 }
 
 func (EquipmentSlotDefinition) Reference() string {
@@ -291,10 +261,6 @@ func (SocketTypeDefinition) Name() string {
 	return "DestinySocketTypeDefinition"
 }
 
-func (SocketTypeDefinition) TableName() string {
-	return "SocketTypes"
-}
-
 func (SocketTypeDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinySocketTypeDefinition"
 }
@@ -326,10 +292,6 @@ type SocketCategoryDefinition map[uint32]SocketCategoryEntity
 
 func (SocketCategoryDefinition) Name() string {
 	return "DestinySocketCategoryDefinition"
-}
-
-func (SocketCategoryDefinition) TableName() string {
-	return "SocketCategories"
 }
 
 func (SocketCategoryDefinition) Reference() string {
@@ -365,10 +327,6 @@ func (DestinationDefinition) Name() string {
 	return "DestinyDestinationDefinition"
 }
 
-func (DestinationDefinition) TableName() string {
-	return "Destinations"
-}
-
 func (DestinationDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.Common.DestinyDestinationDefinition"
 }
@@ -400,10 +358,6 @@ type ActivityGraphDefinition map[uint32]ActivityGraphEntity
 
 func (ActivityGraphDefinition) Name() string {
 	return "DestinyActivityGraphDefinition"
-}
-
-func (ActivityGraphDefinition) TableName() string {
-	return "ActivityGraphs"
 }
 
 func (ActivityGraphDefinition) Reference() string {
@@ -439,10 +393,6 @@ func (ActivityDefinition) Name() string {
 	return "DestinyActivityDefinition"
 }
 
-func (ActivityDefinition) TableName() string {
-	return "Activities"
-}
-
 func (ActivityDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyActivityDefinition"
 }
@@ -474,10 +424,6 @@ type ActivityModifierDefinition map[uint32]ActivityModifierEntity
 
 func (ActivityModifierDefinition) Name() string {
 	return "DestinyActivityModifierDefinition"
-}
-
-func (ActivityModifierDefinition) TableName() string {
-	return "ActivityModifiers"
 }
 
 func (ActivityModifierDefinition) Reference() string {
@@ -513,10 +459,6 @@ func (ObjectiveDefinition) Name() string {
 	return "DestinyObjectiveDefinition"
 }
 
-func (ObjectiveDefinition) TableName() string {
-	return "Objectives"
-}
-
 func (ObjectiveDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyObjectiveDefinition"
 }
@@ -548,10 +490,6 @@ type SandboxPerkDefinition map[uint32]SandboxPerkEntity
 
 func (SandboxPerkDefinition) Name() string {
 	return "DestinySandboxPerkDefinition"
-}
-
-func (SandboxPerkDefinition) TableName() string {
-	return "SandboxPerks"
 }
 
 func (SandboxPerkDefinition) Reference() string {
@@ -587,10 +525,6 @@ func (LocationDefinition) Name() string {
 	return "DestinyLocationDefinition"
 }
 
-func (LocationDefinition) TableName() string {
-	return "Locations"
-}
-
 func (LocationDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyLocationDefinition"
 }
@@ -622,10 +556,6 @@ type ActivityModeDefinition map[uint32]ActivityModeEntity
 
 func (ActivityModeDefinition) Name() string {
 	return "DestinyActivityModeDefinition"
-}
-
-func (ActivityModeDefinition) TableName() string {
-	return "ActivityModes"
 }
 
 func (ActivityModeDefinition) Reference() string {
@@ -661,10 +591,6 @@ func (PlaceDefinition) Name() string {
 	return "DestinyPlaceDefinition"
 }
 
-func (PlaceDefinition) TableName() string {
-	return "Places"
-}
-
 func (PlaceDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyPlaceDefinition"
 }
@@ -696,10 +622,6 @@ type ActivityTypeDefinition map[uint32]ActivityTypeEntity
 
 func (ActivityTypeDefinition) Name() string {
 	return "DestinyActivityTypeDefinition"
-}
-
-func (ActivityTypeDefinition) TableName() string {
-	return "ActivityTypes"
 }
 
 func (ActivityTypeDefinition) Reference() string {
@@ -735,10 +657,6 @@ func (VendorGroupDefinition) Name() string {
 	return "DestinyVendorGroupDefinition"
 }
 
-func (VendorGroupDefinition) TableName() string {
-	return "VendorGroups"
-}
-
 func (VendorGroupDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyVendorGroupDefinition"
 }
@@ -770,10 +688,6 @@ type FactionDefinition map[uint32]FactionEntity
 
 func (FactionDefinition) Name() string {
 	return "DestinyFactionDefinition"
-}
-
-func (FactionDefinition) TableName() string {
-	return "Factions"
 }
 
 func (FactionDefinition) Reference() string {
@@ -809,10 +723,6 @@ func (ArtifactDefinition) Name() string {
 	return "DestinyArtifactDefinition"
 }
 
-func (ArtifactDefinition) TableName() string {
-	return "Artifacts"
-}
-
 func (ArtifactDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.Artifacts.DestinyArtifactDefinition"
 }
@@ -844,10 +754,6 @@ type PowerCapDefinition map[uint32]PowerCapEntity
 
 func (PowerCapDefinition) Name() string {
 	return "DestinyPowerCapDefinition"
-}
-
-func (PowerCapDefinition) TableName() string {
-	return "PowerCaps"
 }
 
 func (PowerCapDefinition) Reference() string {
@@ -883,10 +789,6 @@ func (ProgressionLevelRequirementDefinition) Name() string {
 	return "DestinyProgressionLevelRequirementDefinition"
 }
 
-func (ProgressionLevelRequirementDefinition) TableName() string {
-	return "ProgressionLevelRequirements"
-}
-
 func (ProgressionLevelRequirementDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.Progression.DestinyProgressionLevelRequirementDefinition"
 }
@@ -918,10 +820,6 @@ type RewardSourceDefinition map[uint32]RewardSourceEntity
 
 func (RewardSourceDefinition) Name() string {
 	return "DestinyRewardSourceDefinition"
-}
-
-func (RewardSourceDefinition) TableName() string {
-	return "RewardSources"
 }
 
 func (RewardSourceDefinition) Reference() string {
@@ -957,10 +855,6 @@ func (TraitDefinition) Name() string {
 	return "DestinyTraitDefinition"
 }
 
-func (TraitDefinition) TableName() string {
-	return "Traits"
-}
-
 func (TraitDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyTraitDefinition"
 }
@@ -992,10 +886,6 @@ type TraitCategoryDefinition map[uint32]TraitCategoryEntity
 
 func (TraitCategoryDefinition) Name() string {
 	return "DestinyTraitCategoryDefinition"
-}
-
-func (TraitCategoryDefinition) TableName() string {
-	return "TraitCategories"
 }
 
 func (TraitCategoryDefinition) Reference() string {
@@ -1031,10 +921,6 @@ func (PresentationNodeDefinition) Name() string {
 	return "DestinyPresentationNodeDefinition"
 }
 
-func (PresentationNodeDefinition) TableName() string {
-	return "PresentationNodes"
-}
-
 func (PresentationNodeDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyPresentationNodeDefinition"
 }
@@ -1066,10 +952,6 @@ type CollectibleDefinition map[uint32]CollectibleEntity
 
 func (CollectibleDefinition) Name() string {
 	return "DestinyCollectibleDefinition"
-}
-
-func (CollectibleDefinition) TableName() string {
-	return "Collectibles"
 }
 
 func (CollectibleDefinition) Reference() string {
@@ -1105,10 +987,6 @@ func (MaterialRequirementSetDefinition) Name() string {
 	return "DestinyMaterialRequirementSetDefinition"
 }
 
-func (MaterialRequirementSetDefinition) TableName() string {
-	return "MaterialRequirementSets"
-}
-
 func (MaterialRequirementSetDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyMaterialRequirementSetDefinition"
 }
@@ -1140,10 +1018,6 @@ type RecordDefinition map[uint32]RecordEntity
 
 func (RecordDefinition) Name() string {
 	return "DestinyRecordDefinition"
-}
-
-func (RecordDefinition) TableName() string {
-	return "Records"
 }
 
 func (RecordDefinition) Reference() string {
@@ -1179,10 +1053,6 @@ func (GenderDefinition) Name() string {
 	return "DestinyGenderDefinition"
 }
 
-func (GenderDefinition) TableName() string {
-	return "Genders"
-}
-
 func (GenderDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyGenderDefinition"
 }
@@ -1214,10 +1084,6 @@ type LoreDefinition map[uint32]LoreEntity
 
 func (LoreDefinition) Name() string {
 	return "DestinyLoreDefinition"
-}
-
-func (LoreDefinition) TableName() string {
-	return "Lore"
 }
 
 func (LoreDefinition) Reference() string {
@@ -1290,10 +1156,6 @@ func (EnergyTypeDefinition) Name() string {
 	return "DestinyEnergyTypeDefinition"
 }
 
-func (EnergyTypeDefinition) TableName() string {
-	return "EnergyTypes"
-}
-
 func (EnergyTypeDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.EnergyTypes.DestinyEnergyTypeDefinition"
 }
@@ -1325,10 +1187,6 @@ type PlugSetDefinition map[uint32]PlugSetEntity
 
 func (PlugSetDefinition) Name() string {
 	return "DestinyPlugSetDefinition"
-}
-
-func (PlugSetDefinition) TableName() string {
-	return "PlugSets"
 }
 
 func (PlugSetDefinition) Reference() string {
@@ -1364,10 +1222,6 @@ func (TalentGridDefinition) Name() string {
 	return "DestinyTalentGridDefinition"
 }
 
-func (TalentGridDefinition) TableName() string {
-	return "Talents"
-}
-
 func (TalentGridDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyTalentGridDefinition"
 }
@@ -1399,10 +1253,6 @@ type DamageTypeDefinition map[uint32]DamageTypeEntity
 
 func (DamageTypeDefinition) Name() string {
 	return "DestinyDamageTypeDefinition"
-}
-
-func (DamageTypeDefinition) TableName() string {
-	return "DamageTypes"
 }
 
 func (DamageTypeDefinition) Reference() string {
@@ -1438,10 +1288,6 @@ func (ItemCategoryDefinition) Name() string {
 	return "DestinyItemCategoryDefinition"
 }
 
-func (ItemCategoryDefinition) TableName() string {
-	return "ItemCategories"
-}
-
 func (ItemCategoryDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyItemCategoryDefinition"
 }
@@ -1473,10 +1319,6 @@ type BreakerTypeDefinition map[uint32]BreakerTypeEntity
 
 func (BreakerTypeDefinition) Name() string {
 	return "DestinyBreakerTypeDefinition"
-}
-
-func (BreakerTypeDefinition) TableName() string {
-	return "BreakerTypes"
 }
 
 func (BreakerTypeDefinition) Reference() string {
@@ -1512,10 +1354,6 @@ func (SeasonDefinition) Name() string {
 	return "DestinySeasonDefinition"
 }
 
-func (SeasonDefinition) TableName() string {
-	return "Seasons"
-}
-
 func (SeasonDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.Seasons.DestinySeasonDefinition"
 }
@@ -1547,10 +1385,6 @@ type SeasonPassDefinition map[uint32]SeasonPassEntity
 
 func (SeasonPassDefinition) Name() string {
 	return "DestinySeasonPassDefinition"
-}
-
-func (SeasonPassDefinition) TableName() string {
-	return "SeasonPasses"
 }
 
 func (SeasonPassDefinition) Reference() string {
@@ -1586,10 +1420,6 @@ func (ChecklistDefinition) Name() string {
 	return "DestinyChecklistDefinition"
 }
 
-func (ChecklistDefinition) TableName() string {
-	return "Checklists"
-}
-
 func (ChecklistDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.Checklists.DestinyChecklistDefinition"
 }
@@ -1621,10 +1451,6 @@ type RaceDefinition map[uint32]RaceEntity
 
 func (RaceDefinition) Name() string {
 	return "DestinyRaceDefinition"
-}
-
-func (RaceDefinition) TableName() string {
-	return "Races"
 }
 
 func (RaceDefinition) Reference() string {
@@ -1660,10 +1486,6 @@ func (ClassDefinition) Name() string {
 	return "DestinyClassDefinition"
 }
 
-func (ClassDefinition) TableName() string {
-	return "Classes"
-}
-
 func (ClassDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyClassDefinition"
 }
@@ -1695,10 +1517,6 @@ type MilestoneDefinition map[uint32]MilestoneEntity
 
 func (MilestoneDefinition) Name() string {
 	return "DestinyMilestoneDefinition"
-}
-
-func (MilestoneDefinition) TableName() string {
-	return "Milestones"
 }
 
 func (MilestoneDefinition) Reference() string {
@@ -1734,10 +1552,6 @@ func (UnlockDefinition) Name() string {
 	return "DestinyUnlockDefinition"
 }
 
-func (UnlockDefinition) TableName() string {
-	return "Unlocks"
-}
-
 func (UnlockDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyUnlockDefinition"
 }
@@ -1771,10 +1585,6 @@ func (ReportReasonCategoryDefinition) Name() string {
 	return "DestinyReportReasonCategoryDefinition"
 }
 
-func (ReportReasonCategoryDefinition) TableName() string {
-	return "ReportReasonCategories"
-}
-
 func (ReportReasonCategoryDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.Reporting.DestinyReportReasonCategoryDefinition"
 }
@@ -1806,10 +1616,6 @@ type HistoricalStatsDefinition map[uint32]HistoricalStatsEntity
 
 func (HistoricalStatsDefinition) Name() string {
 	return "DestinyHistoricalStatsDefinition"
-}
-
-func (HistoricalStatsDefinition) TableName() string {
-	return "HistoricalStats"
 }
 
 func (HistoricalStatsDefinition) Reference() string {
