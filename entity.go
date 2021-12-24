@@ -220,7 +220,7 @@ type ActivityGraphEntity struct {
 	DisplayObjectives   []ActivityGraphDisplayObjective
 	DisplayProgressions []ActivityGraphDisplayProgression
 	LinkedGraphs        []LinkedGraph
-	Hash                int32
+	Hash                uint32
 	Index               int32
 	Redacted            bool
 }
@@ -677,20 +677,4 @@ type ReportReasonCategoryEntity struct {
 	Hash              uint32
 	Index             int32
 	Redacted          bool
-}
-
-type HistoricalStatsEntity struct {
-	StatId          string
-	Group           StatsGroupType
-	Modes           []ActivityModeType
-	Category        StatsCategoryType
-	StatName        string
-	StatNameAbbr    string
-	StatDescription string
-	UnitType        UnitType
-	IconImage       string
-	MergeMethod     StatsMergeMethod
-	UnitLabel       string
-	Weight          int32
-	MedalTierHash   uint32
 }

@@ -1119,10 +1119,6 @@ func (MetricDefinition) Name() string {
 	return "DestinyMetricDefinition"
 }
 
-func (MetricDefinition) TablkeName() string {
-	return "Metrics"
-}
-
 func (MetricDefinition) Reference() string {
 	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyMetricDefinition"
 }
@@ -1608,38 +1604,5 @@ func (def *ReportReasonCategoryDefinition) Unmarshal(data []byte) error {
 }
 
 func (def ReportReasonCategoryDefinition) Entity(entityHash uint32) interface{} {
-	return def[entityHash]
-}
-
-// HistoricalStatsDefinition is the contract for all Destiny.Definitions.DestinyHistoricalStatsDefinition entities.
-type HistoricalStatsDefinition map[uint32]HistoricalStatsEntity
-
-func (HistoricalStatsDefinition) Name() string {
-	return "DestinyHistoricalStatsDefinition"
-}
-
-func (HistoricalStatsDefinition) Reference() string {
-	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyHistoricalStatsDefinition"
-}
-
-func (def *HistoricalStatsDefinition) Unmarshal(data []byte) error {
-	m := map[string]HistoricalStatsEntity{}
-	if err := json.Unmarshal(data, &m); err != nil {
-		return err
-	}
-
-	hashMap := map[uint32]HistoricalStatsEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
-	}
-	*def = hashMap
-	return nil
-}
-
-func (def HistoricalStatsDefinition) Entity(entityHash uint32) interface{} {
 	return def[entityHash]
 }
