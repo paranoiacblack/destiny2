@@ -1,12 +1,18 @@
 package destiny2
 
 import (
+	"archive/zip"
+	"bytes"
+	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	"golang.org/x/text/language"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const apiPath = "https://www.bungie.net/Platform"
@@ -47,7 +53,8 @@ type Manifest struct {
 
 	// Mobile contracts for each language/locale. Mobile contracts
 	// are stored as SQL databases.
-	mobileContracts map[language.Tag]string
+	mobileContracts       map[language.Tag]string
+	cachedMobileManifests map[language.Tag]string
 
 	// Content paths.
 	cdn gearCDN
@@ -94,9 +101,8 @@ func (m Manifest) Version() string {
 	return m.version
 }
 
-// FulfillContract fulfills an external-facing bungie.net contract
-// by adding all related entities for a given definition.
-func (m Manifest) FulfillContract(definition Contract, opts ...FulfillmentOption) error {
+// FulfillContract fulfills a Bungie.net contract by adding all related entities for a given definition.
+func (m *Manifest) FulfillContract(definition Contract, opts ...FulfillmentOption) error {
 	fulfillmentOpt := fulfillmentOptions{tag: language.English}
 	for _, opt := range opts {
 		if err := opt(&fulfillmentOpt); err != nil {
@@ -104,30 +110,136 @@ func (m Manifest) FulfillContract(definition Contract, opts ...FulfillmentOption
 		}
 	}
 
-	contractPath, ok := m.contracts[fulfillmentOpt.tag][definition.Name()]
+	retrievalFunc := m.retrieveFromComponent
+	if fulfillmentOpt.mobile {
+		retrievalFunc = m.retrieveFromMobile
+	}
+
+	data, err := retrievalFunc(fulfillmentOpt.tag, definition.Name())
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, definition)
+}
+
+func (m *Manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte, error) {
+	contractPath, ok := m.contracts[tag][name]
 	if !ok {
-		return fmt.Errorf("%q is not a valid Destiny.Definitions name", definition.Name())
+		return nil, fmt.Errorf("%q is not a valid Destiny.Definitions name", name)
 	}
 
 	resp, err := http.Get(fmt.Sprintf("https://www.bungie.net%s", contractPath))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return ioutil.ReadAll(resp.Body)
+}
+
+func (m *Manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, error) {
+	// Bungie's mobile manifest is stored at a given location for each language/locale
+	// as a zipped sqlite DB. To save effort redownloading and unzipping the DB each time,
+	// we'll write it to a temporary file and cache DB connections to it. So retrieving data
+	// from mobile manifest should be fast on repeated contract fulfillments, but possibly slow
+	// the first time.
+	if len(m.cachedMobileManifests) == 0 {
+		m.cachedMobileManifests = map[language.Tag]string{}
+	}
+	if _, ok := m.cachedMobileManifests[tag]; !ok {
+		// First time getting the mobile manifest for this locale, or first time
+		// since an update.
+		if err := m.createTempDB(tag); err != nil {
+			return nil, err
+		}
+	}
+	dbPath := m.cachedMobileManifests[tag]
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// TODO(cmang): Not exactly sure, but name should probably be escaped here to avoid malicious queries.
+	// At the same time, it's querying a temporary read-only database so it probably doesn't matter if a malicious
+	// user tries anything.
+	rows, err := db.QueryContext(context.Background(), fmt.Sprintf("SELECT * FROM %s", name))
+	if err != nil {
+		return nil, err
+	}
+
+	contract := map[uint32]json.RawMessage{}
+	for rows.Next() {
+		var key int
+		var data []byte
+		if err := rows.Scan(&key, &data); err != nil {
+			return nil, err
+		}
+		contract[uint32(key)] = data
+	}
+	return json.Marshal(contract)
+}
+
+// createTempDB creates a temporary file with the sqlite destiny 2 mobile manifest.
+func (m *Manifest) createTempDB(tag language.Tag) error {
+	mobilePath, ok := m.mobileContracts[tag]
+	if !ok {
+		return fmt.Errorf("there is no existing mobile manifest for language/locale %s", tag)
+	}
+
+	resp, err := http.Get("https://www.bungie.net" + mobilePath)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	if err := json.Unmarshal(data, definition); err != nil {
+	zippedDB := bytes.NewReader(body)
+	r, err := zip.NewReader(zippedDB, zippedDB.Size())
+	if err != nil {
 		return err
 	}
+
+	f := r.File[0]
+	fc, err := f.Open()
+	if err != nil {
+		return err
+	}
+	defer fc.Close()
+
+	content, err := ioutil.ReadAll(fc)
+	if err != nil {
+		return err
+	}
+
+	tempDB, err := ioutil.TempFile("", "d2manifest")
+	if err != nil {
+		return err
+	}
+
+	if err := ioutil.WriteFile(tempDB.Name(), content, 0644); err != nil {
+		return err
+	}
+	m.cachedMobileManifests[tag] = tempDB.Name()
 	return nil
 }
 
+type fulfillmentOptions struct {
+	// tag is the supported tag for a given language/locale
+	tag language.Tag
+	// if true, use the mobile manifest when fulfilling a contract
+	mobile bool
+}
+
+// FulfillmentOption is an optional way to fulfill a given contract.
 type FulfillmentOption func(o *fulfillmentOptions) error
 
+// WithLocale fulfills a contract using a specific language/locale
+// supported by Bungie.
 func WithLocale(locale string) FulfillmentOption {
 	return func(o *fulfillmentOptions) error {
 		o.tag = getSupportedTagForLocale(locale)
@@ -138,18 +250,12 @@ func WithLocale(locale string) FulfillmentOption {
 	}
 }
 
+// UseMobileManifest fulfills a contract using data from the Mobile Manifest.
 func UseMobileManifest(mobile bool) FulfillmentOption {
 	return func(o *fulfillmentOptions) error {
 		o.mobile = mobile
 		return nil
 	}
-}
-
-type fulfillmentOptions struct {
-	// tag is the supported tag for a given language/locale
-	tag language.Tag
-	// if true, use the mobile manifest when fulfilling a contract
-	mobile bool
 }
 
 // The JSON structure of the manifest response data.

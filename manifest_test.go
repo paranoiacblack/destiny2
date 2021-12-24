@@ -43,6 +43,66 @@ func TestFulfillContract(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(entity, lookup); diff != "" {
-		t.Fatalf("(%T).Entity(%d) returned different entity from direct access", lore, hash)
+		t.Fatalf("(%T).Entity(%d) returned different entity from direct access: %s", lore, hash, diff)
+	}
+}
+
+func TestFulfillContract_Mobile(t *testing.T) {
+	var manifest Manifest
+	if err := manifest.Update(); err != nil {
+		t.Fatal(err)
+	}
+
+	var lore LoreDefinition
+	if err := manifest.FulfillContract(&lore, UseMobileManifest(true)); err != nil {
+		t.Fatal(err)
+	}
+
+	var hash uint32
+	var entity LoreEntity
+	for k, v := range lore {
+		hash = k
+		entity = v
+		break
+	}
+
+	lookup, ok := lore.Entity(hash).(LoreEntity)
+	if !ok {
+		t.Fatalf("(%T).Entity(%d) returned invalid typed entity", lore, hash)
+	}
+
+	if diff := cmp.Diff(entity, lookup); diff != "" {
+		t.Fatalf("(%T).Entity(%d) returned different entity from direct access: %s", lore, hash, diff)
+	}
+}
+
+// For now, just some sanity checking that the mobile manifest matches the component paths.
+func TestFulfillContract_Comparison(t *testing.T) {
+	var manifest Manifest
+	if err := manifest.Update(); err != nil {
+		t.Fatal(err)
+	}
+
+	var lore LoreDefinition
+	if err := manifest.FulfillContract(&lore); err != nil {
+		t.Fatal(err)
+	}
+
+	var mobileLore LoreDefinition
+	if err := manifest.FulfillContract(&mobileLore, UseMobileManifest(true)); err != nil {
+		t.Fatal(err)
+	}
+
+	var hash uint32
+	var entity LoreEntity
+	for k, v := range lore {
+		hash = k
+		entity = v
+		break
+	}
+
+	mobileEntity := mobileLore[hash]
+	if diff := cmp.Diff(entity, mobileEntity); diff != "" {
+		t.Fatalf("(%T)[%d] returned different entity from mobile manifest: %s", lore, hash, diff)
 	}
 }
