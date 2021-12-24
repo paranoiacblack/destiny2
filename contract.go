@@ -2,7 +2,6 @@ package destiny2
 
 import (
 	"encoding/json"
-	"strconv"
 )
 
 // Contract is a collection of Destiny.Definitions which have their own
@@ -35,18 +34,14 @@ func (InventoryItemDefinition) Reference() string {
 }
 
 func (def *InventoryItemDefinition) Unmarshal(data []byte) error {
-	m := map[string]InventoryItemEntity{}
+	m := map[interface{}]InventoryItemEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]InventoryItemEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -68,18 +63,14 @@ func (ProgressionDefinition) Reference() string {
 }
 
 func (def *ProgressionDefinition) Unmarshal(data []byte) error {
-	m := map[string]ProgressionEntity{}
+	m := map[interface{}]ProgressionEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ProgressionEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -101,18 +92,14 @@ func (InventoryBucketDefinition) Reference() string {
 }
 
 func (def *InventoryBucketDefinition) Unmarshal(data []byte) error {
-	m := map[string]InventoryBucketEntity{}
+	m := map[interface{}]InventoryBucketEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]InventoryBucketEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -134,18 +121,14 @@ func (ItemTierTypeDefinition) Reference() string {
 }
 
 func (def *ItemTierTypeDefinition) Unmarshal(data []byte) error {
-	m := map[string]ItemTierTypeEntity{}
+	m := map[interface{}]ItemTierTypeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ItemTierTypeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -167,18 +150,14 @@ func (StatDefinition) Reference() string {
 }
 
 func (def *StatDefinition) Unmarshal(data []byte) error {
-	m := map[string]StatEntity{}
+	m := map[interface{}]StatEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]StatEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -200,18 +179,14 @@ func (StatGroupDefinition) Reference() string {
 }
 
 func (def *StatGroupDefinition) Unmarshal(data []byte) error {
-	m := map[string]StatGroupEntity{}
+	m := map[interface{}]StatGroupEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]StatGroupEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -233,18 +208,14 @@ func (EquipmentSlotDefinition) Reference() string {
 }
 
 func (def *EquipmentSlotDefinition) Unmarshal(data []byte) error {
-	m := map[string]EquipmentSlotEntity{}
+	m := map[interface{}]EquipmentSlotEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]EquipmentSlotEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -266,18 +237,14 @@ func (SocketTypeDefinition) Reference() string {
 }
 
 func (def *SocketTypeDefinition) Unmarshal(data []byte) error {
-	m := map[string]SocketTypeEntity{}
+	m := map[interface{}]SocketTypeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]SocketTypeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -299,18 +266,14 @@ func (SocketCategoryDefinition) Reference() string {
 }
 
 func (def *SocketCategoryDefinition) Unmarshal(data []byte) error {
-	m := map[string]SocketCategoryEntity{}
+	m := map[interface{}]SocketCategoryEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]SocketCategoryEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -332,18 +295,14 @@ func (DestinationDefinition) Reference() string {
 }
 
 func (def *DestinationDefinition) Unmarshal(data []byte) error {
-	m := map[string]DestinationEntity{}
+	m := map[interface{}]DestinationEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]DestinationEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -365,18 +324,14 @@ func (ActivityGraphDefinition) Reference() string {
 }
 
 func (def *ActivityGraphDefinition) Unmarshal(data []byte) error {
-	m := map[string]ActivityGraphEntity{}
+	m := map[interface{}]ActivityGraphEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ActivityGraphEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -398,18 +353,14 @@ func (ActivityDefinition) Reference() string {
 }
 
 func (def *ActivityDefinition) Unmarshal(data []byte) error {
-	m := map[string]ActivityEntity{}
+	m := map[interface{}]ActivityEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ActivityEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -431,18 +382,14 @@ func (ActivityModifierDefinition) Reference() string {
 }
 
 func (def *ActivityModifierDefinition) Unmarshal(data []byte) error {
-	m := map[string]ActivityModifierEntity{}
+	m := map[interface{}]ActivityModifierEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ActivityModifierEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -464,18 +411,14 @@ func (ObjectiveDefinition) Reference() string {
 }
 
 func (def *ObjectiveDefinition) Unmarshal(data []byte) error {
-	m := map[string]ObjectiveEntity{}
+	m := map[interface{}]ObjectiveEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ObjectiveEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -497,18 +440,14 @@ func (SandboxPerkDefinition) Reference() string {
 }
 
 func (def *SandboxPerkDefinition) Unmarshal(data []byte) error {
-	m := map[string]SandboxPerkEntity{}
+	m := map[interface{}]SandboxPerkEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]SandboxPerkEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -530,18 +469,14 @@ func (LocationDefinition) Reference() string {
 }
 
 func (def *LocationDefinition) Unmarshal(data []byte) error {
-	m := map[string]LocationEntity{}
+	m := map[interface{}]LocationEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]LocationEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -563,18 +498,14 @@ func (ActivityModeDefinition) Reference() string {
 }
 
 func (def *ActivityModeDefinition) Unmarshal(data []byte) error {
-	m := map[string]ActivityModeEntity{}
+	m := map[interface{}]ActivityModeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ActivityModeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -596,18 +527,14 @@ func (PlaceDefinition) Reference() string {
 }
 
 func (def *PlaceDefinition) Unmarshal(data []byte) error {
-	m := map[string]PlaceEntity{}
+	m := map[interface{}]PlaceEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]PlaceEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -629,18 +556,14 @@ func (ActivityTypeDefinition) Reference() string {
 }
 
 func (def *ActivityTypeDefinition) Unmarshal(data []byte) error {
-	m := map[string]ActivityTypeEntity{}
+	m := map[interface{}]ActivityTypeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ActivityTypeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -662,18 +585,14 @@ func (VendorGroupDefinition) Reference() string {
 }
 
 func (def *VendorGroupDefinition) Unmarshal(data []byte) error {
-	m := map[string]VendorGroupEntity{}
+	m := map[interface{}]VendorGroupEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]VendorGroupEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -695,18 +614,14 @@ func (FactionDefinition) Reference() string {
 }
 
 func (def *FactionDefinition) Unmarshal(data []byte) error {
-	m := map[string]FactionEntity{}
+	m := map[interface{}]FactionEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]FactionEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -728,18 +643,14 @@ func (ArtifactDefinition) Reference() string {
 }
 
 func (def *ArtifactDefinition) Unmarshal(data []byte) error {
-	m := map[string]ArtifactEntity{}
+	m := map[interface{}]ArtifactEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ArtifactEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -761,18 +672,14 @@ func (PowerCapDefinition) Reference() string {
 }
 
 func (def *PowerCapDefinition) Unmarshal(data []byte) error {
-	m := map[string]PowerCapEntity{}
+	m := map[interface{}]PowerCapEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]PowerCapEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -794,18 +701,14 @@ func (ProgressionLevelRequirementDefinition) Reference() string {
 }
 
 func (def *ProgressionLevelRequirementDefinition) Unmarshal(data []byte) error {
-	m := map[string]ProgressionLevelRequirementEntity{}
+	m := map[interface{}]ProgressionLevelRequirementEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ProgressionLevelRequirementEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -827,18 +730,14 @@ func (RewardSourceDefinition) Reference() string {
 }
 
 func (def *RewardSourceDefinition) Unmarshal(data []byte) error {
-	m := map[string]RewardSourceEntity{}
+	m := map[interface{}]RewardSourceEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]RewardSourceEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -860,18 +759,14 @@ func (TraitDefinition) Reference() string {
 }
 
 func (def *TraitDefinition) Unmarshal(data []byte) error {
-	m := map[string]TraitEntity{}
+	m := map[interface{}]TraitEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]TraitEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -893,18 +788,14 @@ func (TraitCategoryDefinition) Reference() string {
 }
 
 func (def *TraitCategoryDefinition) Unmarshal(data []byte) error {
-	m := map[string]TraitCategoryEntity{}
+	m := map[interface{}]TraitCategoryEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]TraitCategoryEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -926,18 +817,14 @@ func (PresentationNodeDefinition) Reference() string {
 }
 
 func (def *PresentationNodeDefinition) Unmarshal(data []byte) error {
-	m := map[string]PresentationNodeEntity{}
+	m := map[interface{}]PresentationNodeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]PresentationNodeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -959,18 +846,14 @@ func (CollectibleDefinition) Reference() string {
 }
 
 func (def *CollectibleDefinition) Unmarshal(data []byte) error {
-	m := map[string]CollectibleEntity{}
+	m := map[interface{}]CollectibleEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]CollectibleEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -992,18 +875,14 @@ func (MaterialRequirementSetDefinition) Reference() string {
 }
 
 func (def *MaterialRequirementSetDefinition) Unmarshal(data []byte) error {
-	m := map[string]MaterialRequirementSetEntity{}
+	m := map[interface{}]MaterialRequirementSetEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]MaterialRequirementSetEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1025,18 +904,14 @@ func (RecordDefinition) Reference() string {
 }
 
 func (def *RecordDefinition) Unmarshal(data []byte) error {
-	m := map[string]RecordEntity{}
+	m := map[interface{}]RecordEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]RecordEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1058,18 +933,14 @@ func (GenderDefinition) Reference() string {
 }
 
 func (def *GenderDefinition) Unmarshal(data []byte) error {
-	m := map[string]GenderEntity{}
+	m := map[interface{}]GenderEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]GenderEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1091,18 +962,14 @@ func (LoreDefinition) Reference() string {
 }
 
 func (def *LoreDefinition) Unmarshal(data []byte) error {
-	m := map[string]LoreEntity{}
+	m := map[interface{}]LoreEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]LoreEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1124,18 +991,14 @@ func (MetricDefinition) Reference() string {
 }
 
 func (def *MetricDefinition) Unmarshal(data []byte) error {
-	m := map[string]MetricEntity{}
+	m := map[interface{}]MetricEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]MetricEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1157,18 +1020,14 @@ func (EnergyTypeDefinition) Reference() string {
 }
 
 func (def *EnergyTypeDefinition) Unmarshal(data []byte) error {
-	m := map[string]EnergyTypeEntity{}
+	m := map[interface{}]EnergyTypeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]EnergyTypeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1190,18 +1049,14 @@ func (PlugSetDefinition) Reference() string {
 }
 
 func (def *PlugSetDefinition) Unmarshal(data []byte) error {
-	m := map[string]PlugSetEntity{}
+	m := map[interface{}]PlugSetEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]PlugSetEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1223,18 +1078,14 @@ func (TalentGridDefinition) Reference() string {
 }
 
 func (def *TalentGridDefinition) Unmarshal(data []byte) error {
-	m := map[string]TalentGridEntity{}
+	m := map[interface{}]TalentGridEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]TalentGridEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1256,18 +1107,14 @@ func (DamageTypeDefinition) Reference() string {
 }
 
 func (def *DamageTypeDefinition) Unmarshal(data []byte) error {
-	m := map[string]DamageTypeEntity{}
+	m := map[interface{}]DamageTypeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]DamageTypeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1289,18 +1136,14 @@ func (ItemCategoryDefinition) Reference() string {
 }
 
 func (def *ItemCategoryDefinition) Unmarshal(data []byte) error {
-	m := map[string]ItemCategoryEntity{}
+	m := map[interface{}]ItemCategoryEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ItemCategoryEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1322,18 +1165,14 @@ func (BreakerTypeDefinition) Reference() string {
 }
 
 func (def *BreakerTypeDefinition) Unmarshal(data []byte) error {
-	m := map[string]BreakerTypeEntity{}
+	m := map[interface{}]BreakerTypeEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]BreakerTypeEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1355,18 +1194,14 @@ func (SeasonDefinition) Reference() string {
 }
 
 func (def *SeasonDefinition) Unmarshal(data []byte) error {
-	m := map[string]SeasonEntity{}
+	m := map[interface{}]SeasonEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]SeasonEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1388,18 +1223,14 @@ func (SeasonPassDefinition) Reference() string {
 }
 
 func (def *SeasonPassDefinition) Unmarshal(data []byte) error {
-	m := map[string]SeasonPassEntity{}
+	m := map[interface{}]SeasonPassEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]SeasonPassEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1421,18 +1252,14 @@ func (ChecklistDefinition) Reference() string {
 }
 
 func (def *ChecklistDefinition) Unmarshal(data []byte) error {
-	m := map[string]ChecklistEntity{}
+	m := map[interface{}]ChecklistEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ChecklistEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1454,18 +1281,14 @@ func (RaceDefinition) Reference() string {
 }
 
 func (def *RaceDefinition) Unmarshal(data []byte) error {
-	m := map[string]RaceEntity{}
+	m := map[interface{}]RaceEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]RaceEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1487,18 +1310,14 @@ func (ClassDefinition) Reference() string {
 }
 
 func (def *ClassDefinition) Unmarshal(data []byte) error {
-	m := map[string]ClassEntity{}
+	m := map[interface{}]ClassEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ClassEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1520,18 +1339,14 @@ func (MilestoneDefinition) Reference() string {
 }
 
 func (def *MilestoneDefinition) Unmarshal(data []byte) error {
-	m := map[string]MilestoneEntity{}
+	m := map[interface{}]MilestoneEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]MilestoneEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1553,18 +1368,14 @@ func (UnlockDefinition) Reference() string {
 }
 
 func (def *UnlockDefinition) Unmarshal(data []byte) error {
-	m := map[string]UnlockEntity{}
+	m := map[interface{}]UnlockEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]UnlockEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
@@ -1586,18 +1397,14 @@ func (ReportReasonCategoryDefinition) Reference() string {
 }
 
 func (def *ReportReasonCategoryDefinition) Unmarshal(data []byte) error {
-	m := map[string]ReportReasonCategoryEntity{}
+	m := map[interface{}]ReportReasonCategoryEntity{}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return err
 	}
 
 	hashMap := map[uint32]ReportReasonCategoryEntity{}
-	for key, entity := range m {
-		hash, err := strconv.ParseUint(key, 10, 32)
-		if err != nil {
-			return err
-		}
-		hashMap[uint32(hash)] = entity
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
 	}
 	*def = hashMap
 	return nil
