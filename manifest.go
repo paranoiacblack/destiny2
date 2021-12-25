@@ -45,7 +45,7 @@ func (e LocaleError) Error() string {
 
 // Manifest is a representation of DestinyManifest, the external-facing contract
 // for just the properties needed by those calling the Destiny Platform API.
-type manifest struct {
+type Manifest struct {
 	// Manifest version, used to check if an update is necessary.
 	version string
 	// Contracts are tables in the Manifest Database for specific Destiny2 entities.
@@ -67,8 +67,8 @@ type manifest struct {
 
 // NewManifest returns a populated Destiny 2 Manifest, similar to the
 // Bungie API call Destiny2.GetDestinyManifest.
-func NewManifest() (*manifest, error) {
-	m := new(manifest)
+func NewManifest() (*Manifest, error) {
+	m := new(Manifest)
 	if _, err := m.Update(); err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func NewManifest() (*manifest, error) {
 }
 
 // Close closes this manifest, cleaning up any temporary files created during contract fulfillment.
-func (m *manifest) Close() {
+func (m *Manifest) Close() {
 	// For now, there's just potentially files representing mobile manifest DBs.
 	m.version = ""
 	m.contracts = nil
@@ -101,7 +101,7 @@ const (
 )
 
 // Update updates the manifest to the newest version, if necessary.
-func (m *manifest) Update() (UpdateStatus, error) {
+func (m *Manifest) Update() (UpdateStatus, error) {
 	resp, err := http.Get(apiPath + "/Destiny2/Manifest")
 	if err != nil {
 		return Failed, err
@@ -134,12 +134,12 @@ func (m *manifest) Update() (UpdateStatus, error) {
 }
 
 // Version returns the version string of this manifest.
-func (m manifest) Version() string {
+func (m Manifest) Version() string {
 	return m.version
 }
 
 // FulfillContract fulfills a Bungie.net contract by adding all related entities for a given definition.
-func (m *manifest) FulfillContract(definition Contract, opts ...FulfillmentOption) error {
+func (m *Manifest) FulfillContract(definition Contract, opts ...FulfillmentOption) error {
 	fulfillmentOpt := fulfillmentOptions{tag: language.English}
 	for _, opt := range opts {
 		if err := opt(&fulfillmentOpt); err != nil {
@@ -159,7 +159,7 @@ func (m *manifest) FulfillContract(definition Contract, opts ...FulfillmentOptio
 	return json.Unmarshal(data, definition)
 }
 
-func (m *manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte, error) {
+func (m *Manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte, error) {
 	contractPath, ok := m.contracts[tag][name]
 	if !ok {
 		return nil, fmt.Errorf("%q is not a valid Destiny.Definitions name", name)
@@ -174,7 +174,7 @@ func (m *manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte,
 	return ioutil.ReadAll(resp.Body)
 }
 
-func (m *manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, error) {
+func (m *Manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, error) {
 	// Bungie's mobile manifest is stored at a given location for each language/locale
 	// as a zipped sqlite DB. To save effort redownloading and unzipping the DB each time,
 	// we'll write it to a temporary file and cache DB connections to it. So retrieving data
@@ -218,7 +218,7 @@ func (m *manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, er
 }
 
 // createTempDB creates a temporary file with the sqlite destiny 2 mobile manifest.
-func (m *manifest) createTempDB(tag language.Tag) error {
+func (m *Manifest) createTempDB(tag language.Tag) error {
 	mobilePath, ok := m.mobileContracts[tag]
 	if !ok {
 		return fmt.Errorf("there is no existing mobile manifest for language/locale %s", tag)
@@ -323,7 +323,7 @@ type manifestResponse struct {
 	IconImaginePyramidInfo []string `json:"-"`
 }
 
-func (m *manifest) parseManifest(data []byte) (UpdateStatus, error) {
+func (m *Manifest) parseManifest(data []byte) (UpdateStatus, error) {
 	var resp manifestResponse
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return Failed, err
@@ -357,7 +357,7 @@ func (m *manifest) parseManifest(data []byte) (UpdateStatus, error) {
 }
 
 // mobileWorldContentPaths are defined as {"locale": "path"}
-func (m *manifest) parseMobileContentPaths(data []byte) error {
+func (m *Manifest) parseMobileContentPaths(data []byte) error {
 	contentPaths := make(map[string]string)
 	if err := json.Unmarshal(data, &contentPaths); err != nil {
 		return err
@@ -375,7 +375,7 @@ func (m *manifest) parseMobileContentPaths(data []byte) error {
 }
 
 // jsonWorldComponentsPath are defined as {"locale": {"definition": "path"}}
-func (m *manifest) parseContractPaths(data []byte) error {
+func (m *Manifest) parseContractPaths(data []byte) error {
 	contractPaths := make(map[string]map[string]string)
 	if err := json.Unmarshal(data, &contractPaths); err != nil {
 		return err
