@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"golang.org/x/text/language"
 
@@ -44,7 +45,7 @@ func (e LocaleError) Error() string {
 
 // Manifest is a representation of DestinyManifest, the external-facing contract
 // for just the properties needed by those calling the Destiny Platform API.
-type Manifest struct {
+type manifest struct {
 	// Manifest version, used to check if an update is necessary.
 	version string
 	// Contracts are tables in the Manifest Database for specific Destiny2 entities.
@@ -64,20 +65,56 @@ type Manifest struct {
 	clanBannerPath string
 }
 
+// NewManifest returns a populated Destiny 2 Manifest, similar to the
+// Bungie API call Destiny2.GetDestinyManifest.
+func NewManifest() (*manifest, error) {
+	m := new(manifest)
+	if _, err := m.Update(); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// Close closes this manifest, cleaning up any temporary files created during contract fulfillment.
+func (m *manifest) Close() {
+	// For now, there's just potentially files representing mobile manifest DBs.
+	m.version = ""
+	m.contracts = nil
+	m.mobileContracts = nil
+	for _, db := range m.cachedMobileManifests {
+		os.Remove(db)
+	}
+	m.cachedMobileManifests = nil
+	m.cdn = gearCDN{}
+	m.gearAssetPath = nil
+	m.clanBannerPath = ""
+}
+
+// UpdateStatus is returned from Update to communicate whether or not the manifest was updated to a new version.
+// If Successful, all fulfilled contracts are now outdated.
+type UpdateStatus int
+
+const (
+	AlreadyUpdated UpdateStatus = iota
+	Successful
+	Failed
+)
+
 // Update updates the manifest to the newest version, if necessary.
-func (m *Manifest) Update() error {
+func (m *manifest) Update() (UpdateStatus, error) {
 	resp, err := http.Get(apiPath + "/Destiny2/Manifest")
 	if err != nil {
-		return err
+		return Failed, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return Failed, err
 	}
 
-	var manifest struct {
+	// TODO(paranoiacblack): Handle error status and error code more traditionally.
+	var manifestResp struct {
 		Response        json.RawMessage
 		ErrorCode       int
 		ThrottleSeconds int
@@ -86,23 +123,23 @@ func (m *Manifest) Update() error {
 		MessageData     json.RawMessage
 	}
 
-	if err := json.Unmarshal(body, &manifest); err != nil {
-		return err
+	if err := json.Unmarshal(body, &manifestResp); err != nil {
+		return Failed, err
 	}
-	if err := m.parseManifest(manifest.Response); err != nil {
-		return err
+	status, err := m.parseManifest(manifestResp.Response)
+	if err != nil {
+		return Failed, err
 	}
-
-	return nil
+	return status, nil
 }
 
 // Version returns the version string of this manifest.
-func (m Manifest) Version() string {
+func (m manifest) Version() string {
 	return m.version
 }
 
 // FulfillContract fulfills a Bungie.net contract by adding all related entities for a given definition.
-func (m *Manifest) FulfillContract(definition Contract, opts ...FulfillmentOption) error {
+func (m *manifest) FulfillContract(definition Contract, opts ...FulfillmentOption) error {
 	fulfillmentOpt := fulfillmentOptions{tag: language.English}
 	for _, opt := range opts {
 		if err := opt(&fulfillmentOpt); err != nil {
@@ -122,7 +159,7 @@ func (m *Manifest) FulfillContract(definition Contract, opts ...FulfillmentOptio
 	return json.Unmarshal(data, definition)
 }
 
-func (m *Manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte, error) {
+func (m *manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte, error) {
 	contractPath, ok := m.contracts[tag][name]
 	if !ok {
 		return nil, fmt.Errorf("%q is not a valid Destiny.Definitions name", name)
@@ -137,7 +174,7 @@ func (m *Manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte,
 	return ioutil.ReadAll(resp.Body)
 }
 
-func (m *Manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, error) {
+func (m *manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, error) {
 	// Bungie's mobile manifest is stored at a given location for each language/locale
 	// as a zipped sqlite DB. To save effort redownloading and unzipping the DB each time,
 	// we'll write it to a temporary file and cache DB connections to it. So retrieving data
@@ -160,7 +197,7 @@ func (m *Manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, er
 	}
 	defer db.Close()
 
-	// TODO(cmang): Not exactly sure, but name should probably be escaped here to avoid malicious queries.
+	// TODO(paranoiacblack): Not exactly sure, but name should probably be escaped here to avoid malicious queries.
 	// At the same time, it's querying a temporary read-only database so it probably doesn't matter if a malicious
 	// user tries anything.
 	rows, err := db.QueryContext(context.Background(), fmt.Sprintf("SELECT * FROM %s", name))
@@ -181,7 +218,7 @@ func (m *Manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, er
 }
 
 // createTempDB creates a temporary file with the sqlite destiny 2 mobile manifest.
-func (m *Manifest) createTempDB(tag language.Tag) error {
+func (m *manifest) createTempDB(tag language.Tag) error {
 	mobilePath, ok := m.mobileContracts[tag]
 	if !ok {
 		return fmt.Errorf("there is no existing mobile manifest for language/locale %s", tag)
@@ -258,8 +295,13 @@ func UseMobileManifest(mobile bool) FulfillmentOption {
 	}
 }
 
+// Paths where specific rendering information can be found.
+type gearCDN struct {
+	Geometry, Texture, PlateRegion, Gear, Shader string
+}
+
 // The JSON structure of the manifest response data.
-type manifestJSON struct {
+type manifestResponse struct {
 	Version string
 	// Omitted for now, the database appears to be empty.
 	MobileAssetContentPath   string `json:"-"`
@@ -281,43 +323,41 @@ type manifestJSON struct {
 	IconImaginePyramidInfo []string `json:"-"`
 }
 
-// Paths where specific rendering information can be found.
-type gearCDN struct {
-	Geometry, Texture, PlateRegion, Gear, Shader string
-}
-
-func (m *Manifest) parseManifest(data []byte) error {
-	var manifest manifestJSON
-	if err := json.Unmarshal(data, &manifest); err != nil {
-		return err
+func (m *manifest) parseManifest(data []byte) (UpdateStatus, error) {
+	var resp manifestResponse
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return Failed, err
 	}
-	if m.version == manifest.Version {
+	if m.version == resp.Version {
 		// Manifest is already updated to latest version.
-		return nil
+		return AlreadyUpdated, nil
 	}
 
-	if err := m.parseMobileContentPaths(manifest.MobileWorldContentPaths); err != nil {
-		return err
+	// Close the current manifest, basically clear all the fields and cleanup.
+	m.Close()
+
+	if err := m.parseMobileContentPaths(resp.MobileWorldContentPaths); err != nil {
+		return Failed, err
 	}
 
-	if err := m.parseContractPaths(manifest.JsonWorldComponentContentPaths); err != nil {
-		return err
+	if err := m.parseContractPaths(resp.JsonWorldComponentContentPaths); err != nil {
+		return Failed, err
 	}
 
-	m.version = manifest.Version
+	m.version = resp.Version
 	gearDBs := []string{}
-	for _, db := range manifest.MobileGearAssetDataBases {
+	for _, db := range resp.MobileGearAssetDataBases {
 		gearDBs = append(gearDBs, db.Path)
 	}
 	m.gearAssetPath = gearDBs
-	m.clanBannerPath = manifest.MobileClanBannerDatabasePath
-	m.cdn = manifest.MobileGearCDN
+	m.clanBannerPath = resp.MobileClanBannerDatabasePath
+	m.cdn = resp.MobileGearCDN
 
-	return nil
+	return Successful, nil
 }
 
 // mobileWorldContentPaths are defined as {"locale": "path"}
-func (m *Manifest) parseMobileContentPaths(data []byte) error {
+func (m *manifest) parseMobileContentPaths(data []byte) error {
 	contentPaths := make(map[string]string)
 	if err := json.Unmarshal(data, &contentPaths); err != nil {
 		return err
@@ -335,7 +375,7 @@ func (m *Manifest) parseMobileContentPaths(data []byte) error {
 }
 
 // jsonWorldComponentsPath are defined as {"locale": {"definition": "path"}}
-func (m *Manifest) parseContractPaths(data []byte) error {
+func (m *manifest) parseContractPaths(data []byte) error {
 	contractPaths := make(map[string]map[string]string)
 	if err := json.Unmarshal(data, &contractPaths); err != nil {
 		return err

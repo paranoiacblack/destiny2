@@ -7,17 +7,28 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	var manifest Manifest
-	if err := manifest.Update(); err != nil {
+	manifest, err := NewManifest()
+	if err != nil {
 		t.Fatal(err)
+	}
+	defer manifest.Close()
+
+	status, err := manifest.Update()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if status != AlreadyUpdated {
+		t.Error("Want UpdateStatus AlreadyUpdated got Successful")
 	}
 }
 
 func TestFulfillContract(t *testing.T) {
-	var manifest Manifest
-	if err := manifest.Update(); err != nil {
+	manifest, err := NewManifest()
+	if err != nil {
 		t.Fatal(err)
 	}
+	defer manifest.Close()
 
 	var lore LoreDefinition
 	if err := manifest.FulfillContract(&lore); err != nil {
@@ -48,10 +59,11 @@ func TestFulfillContract(t *testing.T) {
 }
 
 func TestFulfillContract_Mobile(t *testing.T) {
-	var manifest Manifest
-	if err := manifest.Update(); err != nil {
+	manifest, err := NewManifest()
+	if err != nil {
 		t.Fatal(err)
 	}
+	defer manifest.Close()
 
 	var lore LoreDefinition
 	if err := manifest.FulfillContract(&lore, UseMobileManifest(true)); err != nil {
@@ -78,10 +90,11 @@ func TestFulfillContract_Mobile(t *testing.T) {
 
 // For now, just some sanity checking that the mobile manifest matches the component paths.
 func TestFulfillContract_Comparison(t *testing.T) {
-	var manifest Manifest
-	if err := manifest.Update(); err != nil {
+	manifest, err := NewManifest()
+	if err != nil {
 		t.Fatal(err)
 	}
+	defer manifest.Close()
 
 	var lore LoreDefinition
 	if err := manifest.FulfillContract(&lore); err != nil {
