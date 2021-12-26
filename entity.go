@@ -48,15 +48,15 @@ type InventoryItemEntity struct {
 	DoesPostmasterPullHaveSideEffects bool
 	NonTransferrable                  bool
 	ItemCategoryHashes                []uint32
-	SpecialItemType                   int32
-	ItemType                          int32
-	ItemSubType                       int32
-	BreakerType                       int32
+	SpecialItemType                   SpecialItemType
+	ItemType                          ItemType
+	ItemSubType                       ItemSubType
+	BreakerType                       BreakerTypeEnum
 	BreakerTypeHash                   uint32
 	Equippable                        bool
 	DamageTypeHashes                  []uint32
-	DamageTypes                       []int32
-	DefaultDamageType                 int32
+	DamageTypes                       []DamageType
+	DefaultDamageType                 DamageType
 	DefaultDamageTypeHash             uint32
 	SeasonHash                        uint32
 	IsWrapper                         bool
@@ -70,7 +70,7 @@ type InventoryItemEntity struct {
 // ProgressionEntity is an entity in the Destiny.Definitions.DestinyProgressionDefinition contract.
 type ProgressionEntity struct {
 	DisplayProperties DisplayProperties
-	Scope             int32
+	Scope             ProgressionScope
 	RepeatLastStep    bool
 	Source            string
 	Steps             []ProgressionStep
@@ -86,11 +86,11 @@ type ProgressionEntity struct {
 
 type InventoryBucketEntity struct {
 	DisplayProperties      DisplayProperties
-	Scope                  int32
-	Category               int32
+	Scope                  BucketScope
+	Category               BucketCategory
 	BucketOrder            int32
 	ItemCount              int32
-	Location               int32
+	Location               ItemLocation
 	HasTransferDestination bool
 	Enabled                bool
 	Fifo                   bool
@@ -109,9 +109,9 @@ type ItemTierTypeEntity struct {
 
 type StatEntity struct {
 	DisplayProperties DisplayProperties
-	AggregationType   int32
+	AggregationType   StatAggregationType
 	HasComputedBlock  bool
-	StatCategory      int32
+	StatCategory      StatCategory
 	Hash              uint32
 	Index             int32
 	Redacted          bool
@@ -139,7 +139,7 @@ type EquipmentSlotEntity struct {
 
 type VendorEntity struct {
 	DisplayProperties           DisplayProperties
-	VendorProgressionType       int32
+	VendorProgressionType       VendorProgressionType
 	BuyString                   string
 	SellString                  string
 	DisplayItemHash             uint32
@@ -180,7 +180,7 @@ type SocketTypeEntity struct {
 	InsertAction                    InsertPlugAction
 	PlugWhitelist                   []PlugWhitelistEntry
 	SocketCategoryHash              uint32
-	Visibility                      int32
+	Visibility                      SocketTypeVisibility
 	AlwaysRandomizeSockets          bool
 	IsPreviewEnabled                bool
 	HideDuplicateReusablePlugs      bool
@@ -195,7 +195,7 @@ type SocketTypeEntity struct {
 type SocketCategoryEntity struct {
 	DisplayProperties DisplayProperties
 	UiCategoryStyle   uint32
-	CategoryStyle     int32
+	CategoryStyle     SocketCategoryStyle
 	Hash              uint32
 	Index             int32
 	Redacted          bool
@@ -235,7 +235,7 @@ type ActivityEntity struct {
 	DestinationHash                  uint32
 	PlaceHash                        uint32
 	ActivityTypeHash                 uint32
-	Tier                             int32
+	Tier                             ActivityDifficultyTier
 	PgcrImage                        string
 	Rewards                          []ActivityReward
 	Modifiers                        []ActivityModifierReference
@@ -269,7 +269,7 @@ type ActivityModifierEntity struct {
 type ObjectiveEntity struct {
 	DisplayProperties             DisplayProperties
 	CompletionValue               int32
-	Scope                         int32
+	Scope                         GatingScope
 	LocationHash                  uint32
 	AllowNegativeValue            bool
 	AllowValueChangeWhenCompleted bool
@@ -281,8 +281,8 @@ type ObjectiveEntity struct {
 	MinimumVisibilityThreshold    int32
 	AllowOvercompletion           bool
 	ShowValueOnComplete           bool
-	CompletedValueStyle           int32
-	InProgressValueStyle          int32
+	CompletedValueStyle           UnlockValueUIStyle
+	InProgressValueStyle          UnlockValueUIStyle
 	Hash                          uint32
 	Index                         int32
 	Redacted                      bool
@@ -413,13 +413,13 @@ type PresentationNodeEntity struct {
 	DisplayProperties               DisplayProperties
 	OriginalIcon                    string
 	RootViewIcon                    string
-	NodeType                        int32
+	NodeType                        PresentationNodeType
 	Scope                           Scope
 	ObjectiveHash                   uint32
 	CompletionRecordHash            uint32
 	Children                        PresentationNodeChildrenBlock
-	DisplayStyle                    int32
-	ScreenStyle                     int32
+	DisplayStyle                    PresentationDisplayStyle
+	ScreenStyle                     PresentationScreenStyle
 	Requirements                    PresentationNodeRequirementsBlock
 	DisableChildSubscreenNavigation bool
 	MaxCategoryRecordScore          int32
@@ -565,7 +565,7 @@ type ItemCategoryEntity struct {
 	ItemTypeRegexNot        string
 	OriginBucketIdentifier  string
 	GrantDestinyItemType    ItemType
-	GrantDestinySubType     SubType
+	GrantDestinySubType     ItemSubType
 	GrantDestinyClass       Class
 	TraitId                 string
 	GroupedCategoryHashes   []uint32
@@ -643,7 +643,7 @@ type ClassEntity struct {
 
 type MilestoneEntity struct {
 	DisplayProperties               DisplayProperties
-	DisplayPreference               int32
+	DisplayPreference               MilestoneDisplayPreference
 	Imagine                         string
 	MilestoneType                   MilestoneType
 	Recruitable                     bool

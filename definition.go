@@ -30,7 +30,7 @@ type ItemInventoryBlock struct {
 	TierTypeHash                             uint32
 	IsInstanceItem                           bool
 	TierTypeName                             string
-	TierType                                 int32
+	TierType                                 ItemTier
 	ExpirationTooltip                        string
 	ExpiredInActivityMessage                 string
 	ExpiredInOrbitMessage                    string
@@ -73,8 +73,8 @@ type EquippingBlock struct {
 	UniqueLabel           string
 	UniqueLabelHash       uint32
 	EquipmentSlotTypeHash uint32
-	Attributes            int32
-	AmmoType              int32
+	Attributes            EquippingItemBlockAttributes
+	AmmoType              AmmunitionType
 	DisplayStrings        []string
 }
 
@@ -140,7 +140,7 @@ type ItemQuantity struct {
 type ItemSourceBlock struct {
 	SourceHashes  []uint32
 	Sources       []ItemSource
-	Exclusive     int32
+	Exclusive     BungieMembershipType
 	VendorSources []ItemVendorSourceReference
 }
 
@@ -195,10 +195,10 @@ type ItemPlug struct {
 	EnabledMaterialRequirementHash   uint32
 	EnabledRules                     []PlugRule
 	UiPlugLabels                     string
-	PlugStyle                        int32
-	PlugAvailable                    int32
+	PlugStyle                        PlugUIStyles
+	PlugAvailable                    PlugAvailabilityMode
 	AlternateUiPlugLabel             string
-	AlternatePlugStyle               int32
+	AlternatePlugStyle               PlugUIStyles
 	IsDummyPlug                      bool
 	ParentItemOverride               ParentItemOverride
 	EnergyCapacity                   EnergyCapacityEntry
@@ -231,7 +231,7 @@ type ItemSocketEntry struct {
 	ReusablePlugItems                     []ItemSocketEntryPlugItem
 	PreventInitializationOnVendorPurchase bool
 	HidePerksInItemTooltip                bool
-	PlugSources                           int32
+	PlugSources                           SocketPlugSources
 	ReusablePlugSetHash                   uint32
 	RandomizedPlugSetHash                 uint32
 	DefaultVisible                        bool
@@ -260,7 +260,7 @@ type ItemTalentGridBlock struct {
 	TalentGridHash   uint32
 	ItemDetailString string
 	BuildName        string
-	HudDamageType    int32
+	HudDamageType    DamageType
 	HudIcon          string
 }
 
@@ -273,7 +273,7 @@ type ItemInvestmentStat struct {
 type ItemPerkEntry struct {
 	RequirementDisplayString string
 	PerkHash                 uint32
-	PerkVisibility           int32
+	PerkVisibility           ItemPerkVisibility
 }
 
 type ItemActionRequiredItem struct {
@@ -290,7 +290,7 @@ type ProgressionReward struct {
 
 type ProgressionStep struct {
 	StepName          string
-	DisplayEffectType int32
+	DisplayEffectType ProgressionStepDisplayEffect
 	ProgressTotal     int32
 	RewardItems       []ItemQuantity
 	Icon              string
@@ -298,7 +298,7 @@ type ProgressionStep struct {
 
 type ProgressionRewardItemQuantity struct {
 	RewardAtProgressionLevel  int32
-	AcquisitionBehavior       int32
+	AcquisitionBehavior       ProgressionRewardItemAcquisitionBehavior
 	UiDisplayStyle            string
 	ClaimUnlockDisplayStrings []string
 	ItemHash                  uint32
@@ -382,7 +382,7 @@ type VendorInteraction struct {
 	QuestlineItemHash         uint32
 	SackInteractionList       []VendorInteractionSackEntry
 	UiInteractionType         uint32
-	InteractionType           int32
+	InteractionType           VendorInteractionType
 	RewardBlockLabel          string
 	RewardVendorCategoryIndex int32
 	FlavorLineOne             string
@@ -392,9 +392,9 @@ type VendorInteraction struct {
 }
 
 type VendorInteractionReply struct {
-	ItemRewardsSelection int32
+	ItemRewardsSelection VendorInteractionRewardSelection
 	Reply                string
-	ReplyType            int32
+	ReplyType            VendorReplyType
 }
 
 type VendorInteractionSackEntry struct {
@@ -422,7 +422,7 @@ type VendorItem struct {
 	Quantity              int32
 	FailureIndexes        []int32
 	Currencies            []VendorItemQuantity
-	RefundPolicy          int32
+	RefundPolicy          VendorItemRefundPolicy
 	RefundTimeLimit       int32
 	CreationLevels        []ItemCreationEntryLevel
 	DisplayCategoryIndex  int32
@@ -433,9 +433,9 @@ type VendorItem struct {
 	Action                VendorSaleItemActionBlock
 	DisplayCategory       string
 	InventoryBucketHash   uint32
-	VisibilityScope       int32
-	PurchasableScope      int32
-	Exclusivity           int32
+	VisibilityScope       GatingScope
+	PurchasableScope      GatingScope
+	Exclusivity           BungieMembershipType
 	IsOffer               bool
 	IsCrm                 bool
 	SortValue             int32
@@ -479,7 +479,7 @@ type VendorLocation struct {
 
 type InsertPlugAction struct {
 	ActionExecuteSeconds int32
-	ActionType           int32
+	ActionType           SocketTypeActionType
 }
 
 type PlugWhitelistEntry struct {
@@ -513,7 +513,7 @@ type ActivityGraphNode struct {
 }
 
 type ActivityGraphNodeFeaturingState struct {
-	HighlightType int32
+	HighlightType ActivityGraphNodeHighlightType
 }
 
 type ActivityGraphNodeActivity struct {
@@ -766,11 +766,11 @@ type NodeStep struct {
 }
 
 type TalentNodeStepGroups struct {
-	WeaponPerformance  int32
-	ImpactEffects      int32
-	GuardianAttributes int32
-	LightAbilities     int32
-	DamageTypes        DamageType
+	WeaponPerformance  TalentNodeStepWeaponPerformances
+	ImpactEffects      TalentNodeStepImpactEffects
+	GuardianAttributes TalentNodeStepGuardianAttributes
+	LightAbilities     TalentNodeStepLightAbilities
+	DamageTypes        TalentNodeStepDamageTypes
 }
 
 type TalentNodeExclusiveSet struct {
