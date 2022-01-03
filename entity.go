@@ -6,7 +6,7 @@ import "time"
 type InventoryItemEntity struct {
 	DisplayProperties                 DisplayProperties
 	TooltipNotifications              []ItemTooltipNotification
-	CollectableHash                   uint32
+	CollectibleHash                   uint32
 	IconWatermark                     string
 	IconWatermarkShelved              string
 	SecondaryIcon                     string
@@ -84,6 +84,7 @@ type ProgressionEntity struct {
 	Redacted          bool
 }
 
+// InventoryBucketEntity is an entity in the Destiny.Definitions.DestinyInventoryBucketDefinition contract.
 type InventoryBucketEntity struct {
 	DisplayProperties      DisplayProperties
 	Scope                  BucketScope
@@ -99,6 +100,7 @@ type InventoryBucketEntity struct {
 	Redacted               bool
 }
 
+// ItemTierTypeEntity is an entity in the Destiny.Definitions.Items.DestinyItemTierTypeDefinition contract.
 type ItemTierTypeEntity struct {
 	DisplayProperties DisplayProperties
 	InfusionProcess   ItemTierTypeInfusionBlock
@@ -107,6 +109,7 @@ type ItemTierTypeEntity struct {
 	Redacted          bool
 }
 
+// StatEntity is an entity in the Destiny.Definitions.DestinyStatDefinition contract.
 type StatEntity struct {
 	DisplayProperties DisplayProperties
 	AggregationType   StatAggregationType
@@ -117,6 +120,7 @@ type StatEntity struct {
 	Redacted          bool
 }
 
+// StatGroupEntity is an entity in the Destiny.Definitions.DestinyStatGroupDefinition contract.
 type StatGroupEntity struct {
 	MaximumValue int32
 	UiPosition   int32
@@ -127,6 +131,7 @@ type StatGroupEntity struct {
 	Redacted     bool
 }
 
+// EquipmentSlotEntity is an entity in the Destiny.Definitions.DestinyEquipmentSlotDefinition contract.
 type EquipmentSlotEntity struct {
 	EquipmentCategoryHash uint32
 	BucketTypeHash        uint32
@@ -137,6 +142,7 @@ type EquipmentSlotEntity struct {
 	Redacted              bool
 }
 
+// VendorEntity is an entity in the Destiny.Definitions.DestinyVendorDefinition contract.
 type VendorEntity struct {
 	DisplayProperties           DisplayProperties
 	VendorProgressionType       VendorProgressionType
@@ -175,6 +181,7 @@ type VendorEntity struct {
 	Redacted                    bool
 }
 
+// SocketTypeEntity is an entity in the Destiny.Definitions.Sockets.DestinySocketTypeDefinition contract.
 type SocketTypeEntity struct {
 	DisplayProperties               DisplayProperties
 	InsertAction                    InsertPlugAction
@@ -192,6 +199,7 @@ type SocketTypeEntity struct {
 	Redacted                        bool
 }
 
+// SocketCategoryEntity is an entity in the Destiny.Definitions.Sockets.DestinySocketCategoryDefinition contract.
 type SocketCategoryEntity struct {
 	DisplayProperties DisplayProperties
 	UiCategoryStyle   uint32
@@ -201,6 +209,7 @@ type SocketCategoryEntity struct {
 	Redacted          bool
 }
 
+// DestinationEntity is an entity in the Destiny.Definitions.DestinyDestinationDefinition contract.
 type DestinationEntity struct {
 	DisplayProperties           DisplayProperties
 	PlaceHash                   uint32
@@ -213,6 +222,7 @@ type DestinationEntity struct {
 	Redacted                    bool
 }
 
+// ActivityGraphEntity is an entity in the Destiny.Definitions.Director.DestinyActivityGraphDefinition contract.
 type ActivityGraphEntity struct {
 	Nodes               []ActivityGraphNode
 	ArtElements         []ActivityGraphArtElement
@@ -225,6 +235,7 @@ type ActivityGraphEntity struct {
 	Redacted            bool
 }
 
+// ActivityEntity is an entity in the Destiny.Definitions.DestinyActivityDefinition contract.
 type ActivityEntity struct {
 	DisplayProperties                DisplayProperties
 	OriginalDisplayProperties        DisplayProperties
@@ -259,6 +270,7 @@ type ActivityEntity struct {
 	Redacted                         bool
 }
 
+// ActivityModifierEntity is an entity in the Destiny.Definitions.ActivityModifiers.DestinyActivityModifierDefinition contract.
 type ActivityModifierEntity struct {
 	DisplayProperties DisplayProperties
 	Hash              uint32
@@ -266,6 +278,7 @@ type ActivityModifierEntity struct {
 	Redacted          bool
 }
 
+// ObjectiveEntity is an entity in the Destiny.Definitions.DestinyObjectiveDefinition contract.
 type ObjectiveEntity struct {
 	DisplayProperties             DisplayProperties
 	CompletionValue               int32
@@ -288,6 +301,7 @@ type ObjectiveEntity struct {
 	Redacted                      bool
 }
 
+// SandboxPerkEntity is an entity in the Destiny.Definitions.DestinySandboxPerkDefinition contract.
 type SandboxPerkEntity struct {
 	DisplayProperties DisplayProperties
 	PerkIdentifier    string
@@ -300,6 +314,7 @@ type SandboxPerkEntity struct {
 	Redacted          bool
 }
 
+// LocationEntity is an entity in the Destiny.Definitions.DestinyLocationDefinition contract.
 type LocationEntity struct {
 	VendorHash       uint32
 	LocationReleases []LocationRelease
@@ -308,6 +323,7 @@ type LocationEntity struct {
 	Redacted         bool
 }
 
+// ActivityModeEntity is an entity in the Destiny.Definitions.DestinyActivityModeDefinition contract.
 type ActivityModeEntity struct {
 	DisplayProperties    DisplayProperties
 	PgcrImage            string
@@ -325,6 +341,7 @@ type ActivityModeEntity struct {
 	Redacted             bool
 }
 
+// PlaceEntity is an entity in the Destiny.Definitions.DestinyPlaceDefinition contract.
 type PlaceEntity struct {
 	DisplayProperties DisplayProperties
 	Hash              uint32
@@ -332,6 +349,7 @@ type PlaceEntity struct {
 	Redacted          bool
 }
 
+// ActivityTypeEntity is an entity in the Destiny.Definitions.DestinyActivityTypeDefinition contract.
 type ActivityTypeEntity struct {
 	DisplayProperties DisplayProperties
 	Hash              uint32
@@ -339,6 +357,7 @@ type ActivityTypeEntity struct {
 	Redacted          bool
 }
 
+// VendorGroupEntity is an entity in the Destiny.Definitions.DestinyVendorGroupDefinition contract.
 type VendorGroupEntity struct {
 	Order        int32
 	CategoryName string
@@ -347,6 +366,7 @@ type VendorGroupEntity struct {
 	Redacted     bool
 }
 
+// FactionEntity is an entity in the Destiny.Definitions.DestinyFactionDefinition contract.
 type FactionEntity struct {
 	DisplayProperties DisplayProperties
 	ProgressionHash   uint32
@@ -359,6 +379,7 @@ type FactionEntity struct {
 	Redacted          bool
 }
 
+// ArtifactEntity is an entity in the Destiny.Definitions.Artifacts.DestinyArtifactDefinition contract.
 type ArtifactEntity struct {
 	DisplayProperties DisplayProperties
 	TranslationBlock  ItemTranslationBlock
@@ -368,6 +389,7 @@ type ArtifactEntity struct {
 	Redacted          bool
 }
 
+// PowerCapEntity is an entity in the Destiny.Definitions.PowerCaps.DestinyPowerCapDefinition contract.
 type PowerCapEntity struct {
 	PowerCap int32
 	Hash     uint32
@@ -375,6 +397,7 @@ type PowerCapEntity struct {
 	Redacted bool
 }
 
+// ProgressionLevelRequirementEntity is an entity in the Destiny.Definitions.Progression.DestinyProgressionLevelRequirementDefinition contract.
 type ProgressionLevelRequirementEntity struct {
 	RequirementCurve []InterpolationPointFloat
 	ProgressionHash  uint32
@@ -383,6 +406,7 @@ type ProgressionLevelRequirementEntity struct {
 	Redacted         bool
 }
 
+// RewardSourceEntity is an entity in the Destiny.Definitions.DestinyRewardSourceDefinition contract.
 type RewardSourceEntity struct {
 	DisplayProperties DisplayProperties
 	Category          RewardSourceCategory
@@ -391,6 +415,7 @@ type RewardSourceEntity struct {
 	Redacted          bool
 }
 
+// TraitEntity is an entity in the Destiny.Definitions.Traits.DestinyTraitDefinition contract.
 type TraitEntity struct {
 	DisplayProperties DisplayProperties
 	TraitCategoryId   string
@@ -400,6 +425,7 @@ type TraitEntity struct {
 	Redacted          bool
 }
 
+// TraitCategoryEntity is an entity in the Destiny.Definitions.Traits.DestinyTraitCategoryDefinition contract.
 type TraitCategoryEntity struct {
 	TraitCategoryId string
 	TraitHashes     []uint32
@@ -409,6 +435,7 @@ type TraitCategoryEntity struct {
 	Redacted        bool
 }
 
+// PresentationNodeEntity is an entity in the Destiny.Definitions.Presentation.DestinyPresentationNodeDefinition contract.
 type PresentationNodeEntity struct {
 	DisplayProperties               DisplayProperties
 	OriginalIcon                    string
@@ -432,6 +459,7 @@ type PresentationNodeEntity struct {
 	Redacted                        bool
 }
 
+// CollectibleEntity is an entity in the Destiny.Definitions.Collectibles.DestinyCollectibleDefinition contract.
 type CollectibleEntity struct {
 	DisplayProperties    DisplayProperties
 	Scope                Scope
@@ -449,6 +477,7 @@ type CollectibleEntity struct {
 	Redacted             bool
 }
 
+// MaterialRequirementSetEntity is an entity in the Destiny.Definitions.DestinyMaterialRequirementSetDefinition contract.
 type MaterialRequirementSetEntity struct {
 	Materials []MaterialRequirement
 	Hash      uint32
@@ -456,6 +485,7 @@ type MaterialRequirementSetEntity struct {
 	Redacted  bool
 }
 
+// RecordEntity is an entity in the Destiny.Definitions.Records.DestinyRecordDefinition contract.
 type RecordEntity struct {
 	DisplayProperties    DisplayProperties
 	Scope                Scope
@@ -480,6 +510,7 @@ type RecordEntity struct {
 	Redacted             bool
 }
 
+// GenderEntity is an entity in the Destiny.Definitions.DestinyGenderDefinition contract.
 type GenderEntity struct {
 	GenderType        Gender
 	DisplayProperties DisplayProperties
@@ -488,6 +519,7 @@ type GenderEntity struct {
 	Redacted          bool
 }
 
+// LoreEntity is an entity in the Destiny.Definitions.Lore.DestinyLoreDefinition contract.
 type LoreEntity struct {
 	DisplayProperties DisplayProperties
 	Subtitle          string
@@ -496,6 +528,7 @@ type LoreEntity struct {
 	Redacted          bool
 }
 
+// MetricEntity is an entity in the Destiny.Definitions.Metrics.DestinyMetricDefinition contract.
 type MetricEntity struct {
 	DisplayProperties     DisplayProperties
 	TrackingObjectiveHash uint32
@@ -509,6 +542,7 @@ type MetricEntity struct {
 	Redacted              bool
 }
 
+// EnergyTypeEntity is an entity in the Destiny.Definitions.EnergyTypes.DestinyEnergyTypeDefinition contract.
 type EnergyTypeEntity struct {
 	DisplayProperties   DisplayProperties
 	TransparentIconPath string
@@ -521,6 +555,7 @@ type EnergyTypeEntity struct {
 	Redacted            bool
 }
 
+// PlugSetEntity is an entity in the Destiny.Definitions.DestinyPlugSetDefinition contract.
 type PlugSetEntity struct {
 	DisplayProperties DisplayProperties
 	ReusablePlugItems []ItemSocketEntryPlugItemRandomized
@@ -530,6 +565,7 @@ type PlugSetEntity struct {
 	Redacted          bool
 }
 
+// TalentGridEntity is an entity in the Destiny.Definitions.DestinyTalentGridDefinition contract.
 type TalentGridEntity struct {
 	MaxGridLevel           int32
 	GridLevelPerColumn     int32
@@ -544,6 +580,7 @@ type TalentGridEntity struct {
 	Redacted               bool
 }
 
+// DamageTypeEntity is an entity in the Destiny.Definitions.DestinyDamageTypeDefinition contract.
 type DamageTypeEntity struct {
 	DisplayProperties   DisplayProperties
 	TransparentIconPath string
@@ -554,6 +591,7 @@ type DamageTypeEntity struct {
 	Redacted            bool
 }
 
+// ItemCategoryEntity is an entity in the Destiny.Definitions.DestinyItemCategoryDefinition contract.
 type ItemCategoryEntity struct {
 	DisplayProperties       DisplayProperties
 	Visible                 bool
@@ -576,6 +614,7 @@ type ItemCategoryEntity struct {
 	Redacted                bool
 }
 
+// BreakerTypeEntity is an entity in the Destiny.Definitions.BreakerTypes.DestinyBreakerTypeDefinition contract.
 type BreakerTypeEntity struct {
 	DisplayProperties DisplayProperties
 	EnumValue         BreakerTypeEnum
@@ -584,6 +623,7 @@ type BreakerTypeEntity struct {
 	Redacted          bool
 }
 
+// SeasonEntity is an entity in the Destiny.Definitions.Seasons.DestinySeasonDefinition contract.
 type SeasonEntity struct {
 	DisplayProperties                      DisplayProperties
 	BackgroundImagePath                    string
@@ -601,6 +641,7 @@ type SeasonEntity struct {
 	Redacted                               bool
 }
 
+// SeasonPassEntity is an entity in the Destiny.Definitions.Seasons.DestinySeasonPassDefinition contract.
 type SeasonPassEntity struct {
 	DisplayProperties       DisplayProperties
 	RewardProgressionHash   uint32
@@ -610,6 +651,7 @@ type SeasonPassEntity struct {
 	Redacted                bool
 }
 
+// ChecklistEntity is an entity in the Destiny.Definitions.Checklists.DestinyChecklistDefinition contract.
 type ChecklistEntity struct {
 	DisplayProperties DisplayProperties
 	ViewActionString  string
@@ -620,6 +662,7 @@ type ChecklistEntity struct {
 	Redacted          bool
 }
 
+// RaceEntity is an entity in the Destiny.Definitions.DestinyRaceDefinition contract.
 type RaceEntity struct {
 	DisplayProperties             DisplayProperties
 	RaceType                      Race
@@ -630,6 +673,7 @@ type RaceEntity struct {
 	Redacted                      bool
 }
 
+// ClassEntity is an entity in the Destiny.Definitions.DestinyClassDefinition contract.
 type ClassEntity struct {
 	ClassType                      Class
 	DisplayProperties              DisplayProperties
@@ -641,6 +685,7 @@ type ClassEntity struct {
 	Redacted                       bool
 }
 
+// MilestoneEntity is an entity in the Destiny.Definitions.Milestones.DestinyMilestoneDefinition contract.
 type MilestoneEntity struct {
 	DisplayProperties               DisplayProperties
 	DisplayPreference               MilestoneDisplayPreference
@@ -664,6 +709,7 @@ type MilestoneEntity struct {
 	Redacted                        bool
 }
 
+// UnlockEntity is an entity in the Destiny.Definitions.DestinyUnlockDefinition contract.
 type UnlockEntity struct {
 	DisplayProperties DisplayProperties
 	Hash              uint32
@@ -671,6 +717,7 @@ type UnlockEntity struct {
 	Redacted          bool
 }
 
+// ReportReasonCategoryEntity is an entity in the Destiny.Definitions.Reporting.DestinyReportReasonCategoryDefinition contract.
 type ReportReasonCategoryEntity struct {
 	DisplayProperties DisplayProperties
 	Reasons           map[uint32]ReportReason
