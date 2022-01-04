@@ -316,7 +316,7 @@ type StatDisplay struct {
 	StatHash             uint32
 	MaximumValue         int32
 	DisplayAsNumeric     bool
-	DisplayInterpolation InterpolationPoint
+	DisplayInterpolation []InterpolationPoint
 }
 
 type StatOverride struct {
@@ -509,7 +509,7 @@ type ActivityGraphNode struct {
 	Position        Position
 	FeaturingStates []ActivityGraphNodeFeaturingState
 	Activities      []ActivityGraphNodeActivity
-	States          []GraphNodeState
+	States          []ActivityGraphNodeStateEntry
 }
 
 type ActivityGraphNodeFeaturingState struct {
@@ -675,8 +675,8 @@ type MaterialRequirement struct {
 
 type RecordTitleBlock struct {
 	HasTitle                  bool
-	TitlesByGender            map[string]Gender
-	TitlesByGenderHash        map[string]uint32
+	TitlesByGender            map[string]string
+	TitlesByGenderHash        map[uint32]string
 	GildingTrackingRecordHash uint32
 }
 
@@ -789,7 +789,7 @@ type TalentNodeCategory struct {
 	Identifier        string
 	IsLoreDriven      bool
 	DisplayProperties DisplayProperties
-	NodeHashes        uint32
+	NodeHashes        []uint32
 }
 
 type SeasonPreview struct {

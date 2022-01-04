@@ -119,3 +119,68 @@ func TestFulfillContract_Comparison(t *testing.T) {
 		t.Fatalf("(%T)[%d] returned different entity from mobile manifest: %s", lore, hash, diff)
 	}
 }
+
+func TestFulfillContract_All(t *testing.T) {
+	allContracts := []Contract{
+		new(InventoryItemDefinition),
+		new(ProgressionDefinition),
+		new(InventoryBucketDefinition),
+		new(ItemTierTypeDefinition),
+		new(StatDefinition),
+		new(StatGroupDefinition),
+		new(EquipmentSlotDefinition),
+		new(SocketTypeDefinition),
+		new(SocketCategoryDefinition),
+		new(DestinationDefinition),
+		new(ActivityGraphDefinition),
+		new(ActivityDefinition),
+		new(ActivityModifierDefinition),
+		new(ObjectiveDefinition),
+		new(SandboxPerkDefinition),
+		new(LocationDefinition),
+		new(ActivityModeDefinition),
+		new(PlaceDefinition),
+		new(ActivityTypeDefinition),
+		new(VendorGroupDefinition),
+		new(FactionDefinition),
+		new(ArtifactDefinition),
+		new(PowerCapDefinition),
+		new(ProgressionLevelRequirementDefinition),
+		new(RewardSourceDefinition),
+		new(TraitDefinition),
+		new(TraitCategoryDefinition),
+		new(PresentationNodeDefinition),
+		new(CollectibleDefinition),
+		new(MaterialRequirementSetDefinition),
+		new(RecordDefinition),
+		new(GenderDefinition),
+		new(LoreDefinition),
+		new(MetricDefinition),
+		new(EnergyTypeDefinition),
+		new(PlugSetDefinition),
+		new(TalentGridDefinition),
+		new(DamageTypeDefinition),
+		new(ItemCategoryDefinition),
+		new(BreakerTypeDefinition),
+		new(SeasonDefinition),
+		new(SeasonPassDefinition),
+		new(ChecklistDefinition),
+		new(RaceDefinition),
+		new(ClassDefinition),
+		new(MilestoneDefinition),
+		new(UnlockDefinition),
+		new(ReportReasonCategoryDefinition),
+	}
+
+	manifest, err := NewManifest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer manifest.Close()
+
+	for _, contract := range allContracts {
+		if err := manifest.FulfillContract(contract); err != nil {
+			t.Errorf("FulfillContract(%q): %v", contract.Name(), err)
+		}
+	}
+}

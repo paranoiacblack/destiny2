@@ -607,7 +607,7 @@ type ItemCategoryEntity struct {
 	GrantDestinyClass       Class
 	TraitId                 string
 	GroupedCategoryHashes   []uint32
-	ParentCategoryHashes    uint32
+	ParentCategoryHashes    []uint32
 	GroupCategoryOnly       bool
 	Hash                    uint32
 	Index                   int32
@@ -666,7 +666,7 @@ type ChecklistEntity struct {
 type RaceEntity struct {
 	DisplayProperties             DisplayProperties
 	RaceType                      Race
-	GenderedRaceNames             map[Gender]string
+	GenderedRaceNames             map[string]string
 	GenderedRaceNamesByGenderHash map[uint32]string
 	Hash                          uint32
 	Index                         int32
@@ -677,7 +677,7 @@ type RaceEntity struct {
 type ClassEntity struct {
 	ClassType                      Class
 	DisplayProperties              DisplayProperties
-	GenderedClassNames             map[Gender]string
+	GenderedClassNames             map[string]string
 	GenderedClassNamesByGenderHash map[uint32]string
 	MentorVendorHash               uint32
 	Hash                           uint32
