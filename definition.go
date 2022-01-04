@@ -675,7 +675,7 @@ type MaterialRequirement struct {
 
 type RecordTitleBlock struct {
 	HasTitle                  bool
-	TitlesByGender            map[string]string
+	TitlesByGender            map[GenderName]string
 	TitlesByGenderHash        map[uint32]string
 	GildingTrackingRecordHash uint32
 }

@@ -344,6 +344,14 @@ const (
 	Gender_Unknown
 )
 
+// GenderName is the gender of a Destiny 2 character as a string.
+type GenderName string
+
+const (
+	GenderName_Male   GenderName = "Male"
+	GenderName_Female GenderName = "Female"
+)
+
 // Race is the race of a Destiny 2 character
 type Race int32
 

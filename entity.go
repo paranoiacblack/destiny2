@@ -666,7 +666,7 @@ type ChecklistEntity struct {
 type RaceEntity struct {
 	DisplayProperties             DisplayProperties
 	RaceType                      Race
-	GenderedRaceNames             map[string]string
+	GenderedRaceNames             map[GenderName]string
 	GenderedRaceNamesByGenderHash map[uint32]string
 	Hash                          uint32
 	Index                         int32
@@ -677,7 +677,7 @@ type RaceEntity struct {
 type ClassEntity struct {
 	ClassType                      Class
 	DisplayProperties              DisplayProperties
-	GenderedClassNames             map[string]string
+	GenderedClassNames             map[GenderName]string
 	GenderedClassNamesByGenderHash map[uint32]string
 	MentorVendorHash               uint32
 	Hash                           uint32
