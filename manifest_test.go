@@ -122,8 +122,8 @@ func TestFulfillContract_Comparison(t *testing.T) {
 
 func TestFulfillContract_All(t *testing.T) {
 	allContracts := []Contract{
-		new(InventoryItemDefinition),
 		new(ProgressionDefinition),
+		new(InventoryItemDefinition),
 		new(InventoryBucketDefinition),
 		new(ItemTierTypeDefinition),
 		new(StatDefinition),
