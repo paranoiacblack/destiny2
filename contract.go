@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 )
 
-// Contract is a collection of Destiny.Definitions which have their own
-// tables in the Manifest Database.
+// Contract is a collection of Destiny.Definitions which have their own tables in the Manifest Database.
 type Contract interface {
 	// Name is the name of this contract in the Bungie.Net API.
 	Name() string
@@ -13,12 +12,8 @@ type Contract interface {
 	Reference() string
 	// Entity returns a specific entity from this contract with a given hash.
 	Entity(hash uint32) interface{}
-	// Unmarshal unmarshals the JSON for a contract when calling Manifest.Contract(...).
-	// Each contract uses a custom unmarshaller function for convenience.  This is
-	// because the JSON data for contracts uses string keys to a given entity.
-	// However, many entities and definitions store hash values which reference
-	// contracts.  Doing this conversion from string key to hash key on Unmarshal
-	// saves the user doing this on every lookup.
+	// Unmarshal unmarshals the JSON for a contract when calling Manifest.FulfillContract.
+	// Each contract uses a custom unmarshaller function for convenience.
 	Unmarshal([]byte) error
 }
 

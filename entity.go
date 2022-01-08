@@ -5,7 +5,7 @@ import "time"
 // ProgressionEntity is an entity in the Destiny.Definitions.DestinyProgressionDefinition contract.
 // This represents a measurement of progress through a set of conceptual steps.
 type ProgressionEntity struct {
-	DisplayProperties DisplayProperties
+	DisplayProperties ProgressionDisplayProperties
 	// Scope indicates the source of the progression's live data.
 	Scope ProgressionScope
 	// RepeatLastStep indicates if the last step of a progression can be indefinitely repeated.
@@ -231,7 +231,7 @@ type EquipmentSlotEntity struct {
 // VendorEntity is an entity in the Destiny.Definitions.DestinyVendorDefinition contract.
 // Vendors range from NPCs that you can buy items from to Kiosks, Collections and the Vault.
 type VendorEntity struct {
-	DisplayProperties DisplayProperties
+	DisplayProperties VendorDisplayProperties
 	// VendorProgresionType is the type of reward progression this vendor has.
 	VendorProgressionType VendorProgressionType
 	// BuyString is the localized string describing the buy action for this vendor.
@@ -308,7 +308,7 @@ type SocketTypeEntity struct {
 	// SocketCategoryHash is the hash of a related SocketCategoryEntity.
 	SocketCategoryHash uint32
 	// Visibility is the condition under which this socket type is visible.
-	Visibility                 SocketTypeVisibility
+	Visibility                 SocketVisibility
 	AlwaysRandomizeSockets     bool
 	IsPreviewEnabled           bool
 	HideDuplicateReusablePlugs bool
