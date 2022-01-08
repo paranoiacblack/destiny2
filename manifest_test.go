@@ -1,6 +1,7 @@
 package destiny2
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -31,43 +32,34 @@ func TestUpdate(t *testing.T) {
 	}
 
 	if !updated {
-		t.Error("Update after closing manifest should have been necessary")
+		t.Error("Updating empty manifest should be necessary")
 	}
 }
 
+var testContracts = map[string]Contract{
+	"DestinyInventoryItemDefinition": &InventoryItemDefinition{
+		2: {ItemTypeDisplayName: "Dummy", Equippable: true},
+	},
+}
+
 func TestFulfillContract(t *testing.T) {
-	bungieReader := new(BungieAPIReader)
-	manifest, err := NewManifest(bungieReader)
+	reader := &testReader{contracts: testContracts}
+	manifest, err := NewManifest(reader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer bungieReader.Close()
+	defer reader.Close()
 
-	var lore LoreDefinition
-	if err := manifest.FulfillContract(&lore); err != nil {
+	var items InventoryItemDefinition
+	if err := manifest.FulfillContract(&items); err != nil {
 		t.Fatal(err)
 	}
 
-	// Find a random lore entry and compare result to entry found by Contract.Entity.
-	// TODO(paranoiacblack): Ideally allow the ability to use an in-memory manifest
-	// so these tests can use table-driven tests rather than relying on the manifest
-	// entries from when this test is run. Should be easy enough by making Manifest an
-	// interface.
-	var hash uint32
-	var entity LoreEntity
-	for k, v := range lore {
-		hash = k
-		entity = v
-		break
-	}
-
-	lookup, ok := lore.Entity(hash).(LoreEntity)
-	if !ok {
-		t.Fatalf("(%T).Entity(%d) returned invalid typed entity", lore, hash)
-	}
-
-	if diff := cmp.Diff(entity, lookup); diff != "" {
-		t.Fatalf("(%T).Entity(%d) returned different entity from direct access: %s", lore, hash, diff)
+	for k, v := range items {
+		testEntity := testContracts[items.Name()].Entity(k)
+		if diff := cmp.Diff(testEntity, v); diff != "" {
+			t.Errorf("TestEntity differs from fulfilled contract at hash %d: %s", k, diff)
+		}
 	}
 }
 
@@ -200,3 +192,15 @@ func TestFulfillContract_All(t *testing.T) {
 		}
 	}
 }
+
+// testReader will implement ContractReader to allow table-driven tests.
+type testReader struct {
+	contracts map[string]Contract
+}
+
+func (r *testReader) ReadContract(contract Contract, path string, useMobile bool) ([]byte, error) {
+	// Just for rough testing, assume that contracts is filled and return to marshalled version of pre-fulfilled contract.
+	return json.Marshal(r.contracts[contract.Name()])
+}
+
+func (r *testReader) Close() error { return nil }
