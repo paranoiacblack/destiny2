@@ -13,13 +13,31 @@ func TestUpdate(t *testing.T) {
 	}
 	defer manifest.Close()
 
-	status, err := manifest.Update()
-	if err != nil {
+	updated := false
+	onUpdate := func() error {
+		updated = true
+		return nil
+	}
+	if err := manifest.Update(onUpdate); err != nil {
 		t.Fatal(err)
 	}
 
-	if status != AlreadyUpdated {
-		t.Error("Want UpdateStatus AlreadyUpdated got Successful")
+	if updated {
+		t.Error("Update after NewManifest should not be necessary")
+	}
+
+	// Hack for now. Closing a manifest effectively clears all data.
+	// Force a close and then an update is necessary.
+	if err := manifest.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := manifest.Update(onUpdate); err != nil {
+		t.Fatal(err)
+	}
+
+	if !updated {
+		t.Error("Update after closing manifest should have been necessary")
 	}
 }
 

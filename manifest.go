@@ -69,48 +69,46 @@ type Manifest struct {
 // Bungie API call Destiny2.GetDestinyManifest.
 func NewManifest() (*Manifest, error) {
 	m := new(Manifest)
-	if _, err := m.Update(); err != nil {
+	if err := m.Update(nil); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
 // Close closes this manifest, cleaning up any temporary files created during contract fulfillment.
-func (m *Manifest) Close() {
+func (m *Manifest) Close() error {
 	// For now, there's just potentially files representing mobile manifest DBs.
+	for _, db := range m.cachedMobileManifests {
+		if err := os.Remove(db); err != nil {
+			return err
+		}
+	}
+
 	m.version = ""
 	m.contracts = nil
 	m.mobileContracts = nil
-	for _, db := range m.cachedMobileManifests {
-		os.Remove(db)
-	}
 	m.cachedMobileManifests = nil
 	m.cdn = gearCDN{}
 	m.gearAssetPath = nil
 	m.clanBannerPath = ""
+
+	return nil
 }
 
-// UpdateStatus is returned from Update to communicate whether or not the manifest was updated to a new version.
-// If Successful, all fulfilled contracts are now outdated.
-type UpdateStatus int
+// UpdateFunc is a closure that is run after a successful update.
+type UpdateFunc func() error
 
-const (
-	AlreadyUpdated UpdateStatus = iota
-	Successful
-	Failed
-)
-
-// Update updates the manifest to the newest version, if necessary.
-func (m *Manifest) Update() (UpdateStatus, error) {
+// Update updates the manifest to the newest version, if necessary, and runs updateFn.
+func (m *Manifest) Update(updateFn UpdateFunc) error {
 	resp, err := http.Get(apiPath + "/Destiny2/Manifest")
 	if err != nil {
-		return Failed, err
+		return err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return Failed, err
+		return err
 	}
 
 	// TODO(paranoiacblack): Handle error status and error code more traditionally.
@@ -124,13 +122,12 @@ func (m *Manifest) Update() (UpdateStatus, error) {
 	}
 
 	if err := json.Unmarshal(body, &manifestResp); err != nil {
-		return Failed, err
+		return err
 	}
-	status, err := m.parseManifest(manifestResp.Response)
-	if err != nil {
-		return Failed, err
+	if err := m.parseManifest(manifestResp.Response, updateFn); err != nil {
+		return err
 	}
-	return status, nil
+	return nil
 }
 
 // Version returns the version string of this manifest.
@@ -323,25 +320,25 @@ type manifestResponse struct {
 	IconImaginePyramidInfo []string `json:"-"`
 }
 
-func (m *Manifest) parseManifest(data []byte) (UpdateStatus, error) {
+func (m *Manifest) parseManifest(data []byte, updateFn UpdateFunc) error {
 	var resp manifestResponse
 	if err := json.Unmarshal(data, &resp); err != nil {
-		return Failed, err
+		return err
 	}
 	if m.version == resp.Version {
 		// Manifest is already updated to latest version.
-		return AlreadyUpdated, nil
+		return nil
 	}
 
 	// Close the current manifest, basically clear all the fields and cleanup.
 	m.Close()
 
 	if err := m.parseMobileContentPaths(resp.MobileWorldContentPaths); err != nil {
-		return Failed, err
+		return err
 	}
 
 	if err := m.parseContractPaths(resp.JsonWorldComponentContentPaths); err != nil {
-		return Failed, err
+		return err
 	}
 
 	m.version = resp.Version
@@ -353,7 +350,12 @@ func (m *Manifest) parseManifest(data []byte) (UpdateStatus, error) {
 	m.clanBannerPath = resp.MobileClanBannerDatabasePath
 	m.cdn = resp.MobileGearCDN
 
-	return Successful, nil
+	if updateFn != nil {
+		if err := updateFn(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // mobileWorldContentPaths are defined as {"locale": "path"}
