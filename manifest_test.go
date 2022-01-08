@@ -7,11 +7,10 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	manifest, err := NewManifest()
+	manifest, err := NewManifest(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer manifest.Close()
 
 	updated := false
 	onUpdate := func() error {
@@ -26,12 +25,7 @@ func TestUpdate(t *testing.T) {
 		t.Error("Update after NewManifest should not be necessary")
 	}
 
-	// Hack for now. Closing a manifest effectively clears all data.
-	// Force a close and then an update is necessary.
-	if err := manifest.Close(); err != nil {
-		t.Fatal(err)
-	}
-
+	manifest = new(Manifest)
 	if err := manifest.Update(onUpdate); err != nil {
 		t.Fatal(err)
 	}
@@ -42,11 +36,12 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestFulfillContract(t *testing.T) {
-	manifest, err := NewManifest()
+	bungieReader := new(BungieAPIReader)
+	manifest, err := NewManifest(bungieReader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer manifest.Close()
+	defer bungieReader.Close()
 
 	var lore LoreDefinition
 	if err := manifest.FulfillContract(&lore); err != nil {
@@ -77,11 +72,12 @@ func TestFulfillContract(t *testing.T) {
 }
 
 func TestFulfillContract_Mobile(t *testing.T) {
-	manifest, err := NewManifest()
+	bungieReader := new(BungieAPIReader)
+	manifest, err := NewManifest(bungieReader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer manifest.Close()
+	defer bungieReader.Close()
 
 	var lore LoreDefinition
 	if err := manifest.FulfillContract(&lore, UseMobileManifest(true)); err != nil {
@@ -108,11 +104,12 @@ func TestFulfillContract_Mobile(t *testing.T) {
 
 // For now, just some sanity checking that the mobile manifest matches the component paths.
 func TestFulfillContract_Comparison(t *testing.T) {
-	manifest, err := NewManifest()
+	bungieReader := new(BungieAPIReader)
+	manifest, err := NewManifest(bungieReader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer manifest.Close()
+	defer bungieReader.Close()
 
 	var lore LoreDefinition
 	if err := manifest.FulfillContract(&lore); err != nil {
@@ -190,11 +187,12 @@ func TestFulfillContract_All(t *testing.T) {
 		new(ReportReasonCategoryDefinition),
 	}
 
-	manifest, err := NewManifest()
+	bungieReader := new(BungieAPIReader)
+	manifest, err := NewManifest(bungieReader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer manifest.Close()
+	defer bungieReader.Close()
 
 	for _, contract := range allContracts {
 		if err := manifest.FulfillContract(contract); err != nil {

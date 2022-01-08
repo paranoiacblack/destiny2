@@ -1,22 +1,13 @@
 package destiny2
 
 import (
-	"archive/zip"
-	"bytes"
-	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"golang.org/x/text/language"
-
-	_ "github.com/mattn/go-sqlite3"
 )
-
-const apiPath = "https://www.bungie.net/Platform"
 
 var supportedLanguages = language.NewMatcher([]language.Tag{
 	language.English, // Used as a fallback if no language option is provided.
@@ -52,10 +43,8 @@ type Manifest struct {
 	// For each language/locale, there is a different set of paths to the appropriate contract in the manifest.
 	contracts map[language.Tag]map[string]string
 
-	// Mobile contracts for each language/locale. Mobile contracts
-	// are stored as SQL databases.
-	mobileContracts       map[language.Tag]string
-	cachedMobileManifests map[language.Tag]string
+	// Mobile contracts for each language/locale.
+	mobileContracts map[language.Tag]string
 
 	// Content paths.
 	cdn gearCDN
@@ -63,44 +52,25 @@ type Manifest struct {
 	// Lookup tables for information about gear and clan banners.
 	gearAssetPath  []string
 	clanBannerPath string
+
+	contractReader ContractReader
 }
 
 // NewManifest returns a populated Destiny 2 Manifest, similar to the
-// Bungie API call Destiny2.GetDestinyManifest.
-func NewManifest() (*Manifest, error) {
-	m := new(Manifest)
+func NewManifest(reader ContractReader) (*Manifest, error) {
+	m := &Manifest{contractReader: reader}
 	if err := m.Update(nil); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// Close closes this manifest, cleaning up any temporary files created during contract fulfillment.
-func (m *Manifest) Close() error {
-	// For now, there's just potentially files representing mobile manifest DBs.
-	for _, db := range m.cachedMobileManifests {
-		if err := os.Remove(db); err != nil {
-			return err
-		}
-	}
-
-	m.version = ""
-	m.contracts = nil
-	m.mobileContracts = nil
-	m.cachedMobileManifests = nil
-	m.cdn = gearCDN{}
-	m.gearAssetPath = nil
-	m.clanBannerPath = ""
-
-	return nil
-}
-
 // UpdateFunc is a closure that is run after a successful update.
 type UpdateFunc func() error
 
-// Update updates the manifest to the newest version, if necessary, and runs updateFn.
+// Update updates the manifest to the newest version and, if necessary, runs updateFn.
 func (m *Manifest) Update(updateFn UpdateFunc) error {
-	resp, err := http.Get(apiPath + "/Destiny2/Manifest")
+	resp, err := http.Get("https://www.bungie.net/Platform/Destiny2/Manifest")
 	if err != nil {
 		return err
 	}
@@ -144,122 +114,20 @@ func (m *Manifest) FulfillContract(definition Contract, opts ...FulfillmentOptio
 		}
 	}
 
-	retrievalFunc := m.retrieveFromComponent
+	tag := fulfillmentOpt.tag
+	path, ok := m.contracts[tag][definition.Name()]
 	if fulfillmentOpt.mobile {
-		retrievalFunc = m.retrieveFromMobile
+		path, ok = m.mobileContracts[tag]
+	}
+	if !ok {
+		return fmt.Errorf("%q is not a valid Destiny.Definitions name", definition.Name())
 	}
 
-	data, err := retrievalFunc(fulfillmentOpt.tag, definition.Name())
+	data, err := m.contractReader.ReadContract(definition, path, fulfillmentOpt.mobile)
 	if err != nil {
 		return err
 	}
 	return json.Unmarshal(data, definition)
-}
-
-func (m *Manifest) retrieveFromComponent(tag language.Tag, name string) ([]byte, error) {
-	contractPath, ok := m.contracts[tag][name]
-	if !ok {
-		return nil, fmt.Errorf("%q is not a valid Destiny.Definitions name", name)
-	}
-
-	resp, err := http.Get(fmt.Sprintf("https://www.bungie.net%s", contractPath))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	return ioutil.ReadAll(resp.Body)
-}
-
-func (m *Manifest) retrieveFromMobile(tag language.Tag, name string) ([]byte, error) {
-	// Bungie's mobile manifest is stored at a given location for each language/locale
-	// as a zipped sqlite DB. To save effort redownloading and unzipping the DB each time,
-	// we'll write it to a temporary file and cache DB connections to it. So retrieving data
-	// from mobile manifest should be fast on repeated contract fulfillments, but possibly slow
-	// the first time.
-	if len(m.cachedMobileManifests) == 0 {
-		m.cachedMobileManifests = map[language.Tag]string{}
-	}
-	if _, ok := m.cachedMobileManifests[tag]; !ok {
-		// First time getting the mobile manifest for this locale, or first time
-		// since an update.
-		if err := m.createTempDB(tag); err != nil {
-			return nil, err
-		}
-	}
-	dbPath := m.cachedMobileManifests[tag]
-	db, err := sql.Open("sqlite3", dbPath)
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
-	// TODO(paranoiacblack): Not exactly sure, but name should probably be escaped here to avoid malicious queries.
-	// At the same time, it's querying a temporary read-only database so it probably doesn't matter if a malicious
-	// user tries anything.
-	rows, err := db.QueryContext(context.Background(), fmt.Sprintf("SELECT * FROM %s", name))
-	if err != nil {
-		return nil, err
-	}
-
-	contract := map[uint32]json.RawMessage{}
-	for rows.Next() {
-		var key int
-		var data []byte
-		if err := rows.Scan(&key, &data); err != nil {
-			return nil, err
-		}
-		contract[uint32(key)] = data
-	}
-	return json.Marshal(contract)
-}
-
-// createTempDB creates a temporary file with the sqlite destiny 2 mobile manifest.
-func (m *Manifest) createTempDB(tag language.Tag) error {
-	mobilePath, ok := m.mobileContracts[tag]
-	if !ok {
-		return fmt.Errorf("there is no existing mobile manifest for language/locale %s", tag)
-	}
-
-	resp, err := http.Get("https://www.bungie.net" + mobilePath)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	zippedDB := bytes.NewReader(body)
-	r, err := zip.NewReader(zippedDB, zippedDB.Size())
-	if err != nil {
-		return err
-	}
-
-	f := r.File[0]
-	fc, err := f.Open()
-	if err != nil {
-		return err
-	}
-	defer fc.Close()
-
-	content, err := ioutil.ReadAll(fc)
-	if err != nil {
-		return err
-	}
-
-	tempDB, err := ioutil.TempFile("", "d2manifest")
-	if err != nil {
-		return err
-	}
-
-	if err := ioutil.WriteFile(tempDB.Name(), content, 0644); err != nil {
-		return err
-	}
-	m.cachedMobileManifests[tag] = tempDB.Name()
-	return nil
 }
 
 type fulfillmentOptions struct {
@@ -329,9 +197,6 @@ func (m *Manifest) parseManifest(data []byte, updateFn UpdateFunc) error {
 		// Manifest is already updated to latest version.
 		return nil
 	}
-
-	// Close the current manifest, basically clear all the fields and cleanup.
-	m.Close()
 
 	if err := m.parseMobileContentPaths(resp.MobileWorldContentPaths); err != nil {
 		return err
