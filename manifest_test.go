@@ -1,6 +1,7 @@
 package destiny2
 
 import (
+	"sort"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -114,6 +115,48 @@ func TestFulfillContract(t *testing.T) {
 				destination := destinations[starhorse.Locations[0].DestinationHash]
 				if diff := cmp.Diff(destination.DisplayProperties, starhorseLocation); diff != "" {
 					t.Errorf("Starhorse's location is incorrect: %s", diff)
+				}
+			},
+		},
+		{
+			name: "Find all exotic warlock helments",
+			fn: func(t *testing.T) {
+				wantExotics := []string{
+					"Apotheosis Veil",
+					"Astrocyte Verse",
+					"Crown of Tempests",
+					"Dawn Chorus",
+					"Eye of Another World",
+					"Felwinter's Helm",
+					"Nezarec's Sin",
+					"Skull of Dire Ahamkara",
+					"The Stag",
+					"Verity's Brow",
+				}
+
+				var items InventoryItemDefinition
+				if err := manifest.FulfillContract(&items); err != nil {
+					t.Fatal(err)
+				}
+
+				var gotExotics []string
+				for _, item := range items {
+
+					// Skip anything that isn't a warlock-exclusive exotic helmet.
+					if item.ClassType != Class_Warlock || item.Inventory.TierType != ItemTier_Exotic || item.ItemSubType != SubType_HelmetArmor {
+						continue
+					}
+
+					// Also, skip exotics that use Armor 1.0 (implementation difference is Armor 2.0 gear has an associated CollectibleHash)
+					if item.CollectibleHash == 0 {
+						continue
+					}
+					gotExotics = append(gotExotics, item.DisplayProperties.Name)
+				}
+
+				sort.Strings(gotExotics)
+				if diff := cmp.Diff(wantExotics, gotExotics); diff != "" {
+					t.Errorf("Did not find all expected warlock exotic helmets: %s", diff)
 				}
 			},
 		},
