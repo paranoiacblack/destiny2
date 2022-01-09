@@ -672,7 +672,7 @@ type CollectibleEntity struct {
 	PresentationNodeType PresentationNodeType
 	TraitIds             []string
 	TraitHashes          []uint32
-	// ParentNodeHashes are the hashes of presentation nodes that this collectible as a child.
+	// ParentNodeHashes are the hashes of presentation nodes that have this collectible as a child.
 	ParentNodeHashes []uint32
 	EntityMetadata
 }

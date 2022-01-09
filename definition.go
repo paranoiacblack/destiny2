@@ -715,7 +715,7 @@ type LinkedGraph struct {
 
 // Bubble is basic identifying data about a destination bubble.
 type Bubble struct {
-	// Hash is the identifier for the bubble which is unique within a destination.
+	// Hash is the unique identifier for this bubble within a destination.
 	Hash              uint32
 	DisplayProperties DisplayProperties
 }
