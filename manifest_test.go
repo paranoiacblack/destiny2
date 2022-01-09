@@ -159,6 +159,7 @@ func TestFulfillContract_All(t *testing.T) {
 		new(MaterialRequirementSetDefinition),
 		new(RecordDefinition),
 		new(GenderDefinition),
+		new(VendorDefinition),
 		new(LoreDefinition),
 		new(MetricDefinition),
 		new(EnergyTypeDefinition),
