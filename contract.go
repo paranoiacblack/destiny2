@@ -945,6 +945,35 @@ func (def GenderDefinition) Entity(entityHash uint32) interface{} {
 	return def[entityHash]
 }
 
+// VendorDefinition is the contract for all Destiny.Definitions.DestinyVendorDefinition entities.
+type VendorDefinition map[uint32]VendorEntity
+
+func (VendorDefinition) Name() string {
+	return "DestinyVendorDefinition"
+}
+
+func (VendorDefinition) Reference() string {
+	return "https://bungie-net.github.io/#/components/schemas/Destiny.Definitions.DestinyVendorDefinition"
+}
+
+func (def *VendorDefinition) Unmarshal(data []byte) error {
+	m := map[interface{}]VendorEntity{}
+	if err := json.Unmarshal(data, &m); err != nil {
+		return err
+	}
+
+	hashMap := map[uint32]VendorEntity{}
+	for _, entity := range m {
+		hashMap[entity.Hash] = entity
+	}
+	*def = hashMap
+	return nil
+}
+
+func (def VendorDefinition) Entity(entityHash uint32) interface{} {
+	return def[entityHash]
+}
+
 // LoreDefinition is the contract for all Destiny.Definitions.DestinyLoreDefinition entities.
 type LoreDefinition map[uint32]LoreEntity
 
