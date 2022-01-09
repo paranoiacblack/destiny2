@@ -1,10 +1,10 @@
 package destiny2
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func TestUpdate(t *testing.T) {
@@ -36,97 +36,95 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-var testContracts = map[string]Contract{
-	"DestinyInventoryItemDefinition": &InventoryItemDefinition{
-		2: {ItemTypeDisplayName: "Dummy", Equippable: true},
-	},
+type fulfillmentTests struct {
+	name string
+	fn   func(t *testing.T)
 }
 
 func TestFulfillContract(t *testing.T) {
-	reader := &testReader{contracts: testContracts}
+	reader := NewTestReader()
 	manifest, err := NewManifest(reader)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer reader.Close()
 
-	var items InventoryItemDefinition
-	if err := manifest.FulfillContract(&items); err != nil {
-		t.Fatal(err)
+	tests := []fulfillmentTests{
+		{
+			name: "Gender DisplayProperties",
+			fn: func(t *testing.T) {
+				var genders GenderDefinition
+				if err := manifest.FulfillContract(&genders); err != nil {
+					t.Fatal(err)
+				}
+
+				genderProps := map[Gender]DisplayProperties{
+					Gender_Male:   DisplayProperties{Name: "Masculine"},
+					Gender_Female: DisplayProperties{Name: "Feminine"},
+				}
+
+				for _, gender := range genders {
+					prop := genderProps[gender.GenderType]
+					if diff := cmp.Diff(prop, gender.DisplayProperties); diff != "" {
+						t.Errorf("Gender DisplayProperties differ: %s", diff)
+					}
+				}
+			},
+		},
+		{
+			name: "Gjallarhorn Lore",
+			fn: func(t *testing.T) {
+				const gjallarhornHash = 1363886209
+
+				var items InventoryItemDefinition
+				var lore LoreDefinition
+				if err := manifest.FulfillContract(&items); err != nil {
+					t.Fatal(err)
+				}
+				if err := manifest.FulfillContract(&lore); err != nil {
+					t.Fatal(err)
+				}
+
+				horn := items[gjallarhornHash]
+				hornLore := lore[horn.LoreHash]
+				if hornLore.Subtitle != horn.FlavorText {
+					t.Errorf("Gjallarhorn lore is incorrect: want %q, got %q", horn.FlavorText, hornLore.Subtitle)
+				}
+			},
+		},
+		{
+			name: "Starhorse Location",
+			fn: func(t *testing.T) {
+				const starhorseHash = 3431983428
+				starhorseLocation := DisplayProperties{
+					Name:        "Eternity",
+					Description: "A strange pocket dimension where multiple realities from across the paraverse converge and overlap.",
+				}
+
+				var vendors VendorDefinition
+				var destinations DestinationDefinition
+				if err := manifest.FulfillContract(&vendors); err != nil {
+					t.Fatal(err)
+				}
+				if err := manifest.FulfillContract(&destinations); err != nil {
+					t.Fatal(err)
+				}
+
+				starhorse := vendors[starhorseHash]
+				destination := destinations[starhorse.Locations[0].DestinationHash]
+				if diff := cmp.Diff(destination.DisplayProperties, starhorseLocation); diff != "" {
+					t.Errorf("Starhorse's location is incorrect: %s", diff)
+				}
+			},
+		},
 	}
 
-	for k, v := range items {
-		testEntity := testContracts[items.Name()].Entity(k)
-		if diff := cmp.Diff(testEntity, v); diff != "" {
-			t.Errorf("TestEntity differs from fulfilled contract at hash %d: %s", k, diff)
-		}
-	}
-}
-
-func TestFulfillContract_Mobile(t *testing.T) {
-	bungieReader := new(BungieAPIReader)
-	manifest, err := NewManifest(bungieReader)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer bungieReader.Close()
-
-	var lore LoreDefinition
-	if err := manifest.FulfillContract(&lore, UseMobileManifest(true)); err != nil {
-		t.Fatal(err)
-	}
-
-	var hash uint32
-	var entity LoreEntity
-	for k, v := range lore {
-		hash = k
-		entity = v
-		break
-	}
-
-	lookup, ok := lore.Entity(hash).(LoreEntity)
-	if !ok {
-		t.Fatalf("(%T).Entity(%d) returned invalid typed entity", lore, hash)
-	}
-
-	if diff := cmp.Diff(entity, lookup); diff != "" {
-		t.Fatalf("(%T).Entity(%d) returned different entity from direct access: %s", lore, hash, diff)
-	}
-}
-
-// For now, just some sanity checking that the mobile manifest matches the component paths.
-func TestFulfillContract_Comparison(t *testing.T) {
-	bungieReader := new(BungieAPIReader)
-	manifest, err := NewManifest(bungieReader)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer bungieReader.Close()
-
-	var lore LoreDefinition
-	if err := manifest.FulfillContract(&lore); err != nil {
-		t.Fatal(err)
-	}
-
-	var mobileLore LoreDefinition
-	if err := manifest.FulfillContract(&mobileLore, UseMobileManifest(true)); err != nil {
-		t.Fatal(err)
-	}
-
-	var hash uint32
-	var entity LoreEntity
-	for k, v := range lore {
-		hash = k
-		entity = v
-		break
-	}
-
-	mobileEntity := mobileLore[hash]
-	if diff := cmp.Diff(entity, mobileEntity); diff != "" {
-		t.Fatalf("(%T)[%d] returned different entity from mobile manifest: %s", lore, hash, diff)
+	for _, test := range tests {
+		t.Run(test.name, test.fn)
 	}
 }
 
+// Testing that all contracts can be fulfilled without error.
 func TestFulfillContract_All(t *testing.T) {
 	allContracts := []Contract{
 		new(ProgressionDefinition),
@@ -179,12 +177,12 @@ func TestFulfillContract_All(t *testing.T) {
 		new(ReportReasonCategoryDefinition),
 	}
 
-	bungieReader := new(BungieAPIReader)
-	manifest, err := NewManifest(bungieReader)
+	reader := NewTestReader()
+	manifest, err := NewManifest(reader)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer bungieReader.Close()
+	defer reader.Close()
 
 	for _, contract := range allContracts {
 		if err := manifest.FulfillContract(contract); err != nil {
@@ -193,14 +191,31 @@ func TestFulfillContract_All(t *testing.T) {
 	}
 }
 
-// testReader will implement ContractReader to allow table-driven tests.
-type testReader struct {
-	contracts map[string]Contract
+// NewTestReader creates a ContractReader for testing.
+func NewTestReader() *sqliteReader {
+	return &sqliteReader{cachedContracts: map[string][]byte{}}
 }
 
-func (r *testReader) ReadContract(contract Contract, path string, useMobile bool) ([]byte, error) {
-	// Just for rough testing, assume that contracts is filled and return to marshalled version of pre-fulfilled contract.
-	return json.Marshal(r.contracts[contract.Name()])
+// sqliteReader will implement ContractReader to allow contract fulfillment from a cached database.
+type sqliteReader struct {
+	cachedContracts map[string][]byte
 }
 
-func (r *testReader) Close() error { return nil }
+func (r *sqliteReader) ReadContract(contract Contract, path string, useMobile bool) ([]byte, error) {
+	name := contract.Name()
+	if data, ok := r.cachedContracts[name]; ok {
+		return data, nil
+	}
+
+	data, err := readContractFromDB("testdata/mobile_manifest_en.sqlite", name)
+	if err != nil {
+		return nil, err
+	}
+	r.cachedContracts[name] = data
+	return data, nil
+}
+
+func (r *sqliteReader) Close() error {
+	r.cachedContracts = nil
+	return nil
+}

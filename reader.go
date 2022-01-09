@@ -60,30 +60,11 @@ func (r *BungieAPIReader) fromMobile(contract Contract, path string) ([]byte, er
 	}
 
 	dbPath := r.cachedMobileManifests[cachedName]
-	db, err := sql.Open("sqlite3", dbPath)
+	data, err := readContractFromDB(dbPath, contract.Name())
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
-
-	// TODO(paranoiacblack): Not exactly sure, but name should probably be escaped here to avoid malicious queries.
-	// At the same time, it's querying a temporary read-only database so it probably doesn't matter if a malicious
-	// user tries anything.
-	rows, err := db.QueryContext(context.Background(), fmt.Sprintf("SELECT * FROM %s", contract.Name()))
-	if err != nil {
-		return nil, err
-	}
-
-	definitions := map[uint32]json.RawMessage{}
-	for rows.Next() {
-		var key int
-		var data []byte
-		if err := rows.Scan(&key, &data); err != nil {
-			return nil, err
-		}
-		definitions[uint32(key)] = data
-	}
-	return json.Marshal(definitions)
+	return data, nil
 }
 
 // createTempDB creates a temporary file with the sqlite destiny 2 mobile manifest.
@@ -137,4 +118,29 @@ func (r *BungieAPIReader) Close() error {
 		}
 	}
 	return nil
+}
+
+// readContractFromDB is a helper for reading a sqlite DB containing Bungie.net contract.
+func readContractFromDB(path string, contractName string) ([]byte, error) {
+	db, err := sql.Open("sqlite3", path)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	rows, err := db.QueryContext(context.Background(), fmt.Sprintf("SELECT * FROM %s", contractName))
+	if err != nil {
+		return nil, err
+	}
+
+	definitions := map[uint32]json.RawMessage{}
+	for rows.Next() {
+		var key int
+		var data []byte
+		if err := rows.Scan(&key, &data); err != nil {
+			return nil, err
+		}
+		definitions[uint32(key)] = data
+	}
+	return json.Marshal(definitions)
 }
