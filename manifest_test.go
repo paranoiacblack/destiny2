@@ -1,6 +1,8 @@
 package destiny2
 
 import (
+	"fmt"
+	"io/ioutil"
 	"sort"
 	"testing"
 
@@ -160,6 +162,22 @@ func TestFulfillContract(t *testing.T) {
 				}
 			},
 		},
+		{
+			name: "Mobile and component consistency",
+			fn: func(t *testing.T) {
+				var lore, mobileLore LoreDefinition
+				if err := manifest.FulfillContract(&lore); err != nil {
+					t.Fatal(err)
+				}
+				if err := manifest.FulfillContract(&mobileLore, UseMobileManifest(true)); err != nil {
+					t.Fatal(err)
+				}
+
+				if diff := cmp.Diff(lore, mobileLore); diff != "" {
+					t.Errorf("Component lore and mobile manifest lore are not consistent: %s", diff)
+				}
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -247,6 +265,10 @@ type sqliteReader struct {
 
 func (r *sqliteReader) ReadContract(contract Contract, path string, useMobile bool) ([]byte, error) {
 	name := contract.Name()
+	if !useMobile {
+		return ioutil.ReadFile(fmt.Sprintf("testdata/%s.json", contract.Name()))
+	}
+
 	if data, ok := r.cachedContracts[name]; ok {
 		return data, nil
 	}
