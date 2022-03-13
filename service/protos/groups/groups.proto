@@ -1,0 +1,21 @@
+syntax = "proto3";
+package groups;
+
+import "protos/enums/enums.proto";
+
+option go_package = "github.com/paranoiacblack/destiny2/service/groups";
+
+message GroupUserInfoCard {
+  string last_seen_display_name = 1;
+  enums.BungieCredentialType last_seen_display_name_type = 2;
+  string supplemental_display_name = 3;
+  string icon_path = 4;
+  int32 cross_save_override = 5;
+  repeated enums.BungieMembershipType applicable_membership_types = 6;
+  bool is_public = 7;
+  enums.BungieMembershipType membership_type = 8;
+  int64 membership_id = 9;
+  string display_name = 10;
+  string bungie_global_display_name = 11;
+  int32 bungie_global_display_name_code = 12;
+}

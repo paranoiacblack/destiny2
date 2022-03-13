@@ -1,0 +1,165 @@
+syntax = "proto3";
+package user;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "protos/enums/enums.proto";
+import "protos/groups/groups.proto";
+import "protos/ignores/ignores.proto";
+
+option go_package = "github.com/paranoiacblack/destiny2/service/user";
+
+message UserMembership {
+  enums.BungieMembershipType membership_type = 1;
+  int64 membership_id = 2;
+  string display_name = 3;
+  string bungie_global_display_name = 4;
+  int32  bungie_global_display_name_code = 5;
+}
+
+message CrossSaveUserMembership {
+  int32 cross_save_override = 1;
+  repeated enums.BungieMembershipType applicable_membership_types = 2;
+  bool is_public = 3;
+  enums.BungieMembershipType membership_type = 4;
+  int64 membership_id = 5;
+  string display_name = 6;
+  string bungie_global_display_name = 7;
+  int32 bungie_global_display_name_code = 8;
+}
+
+message UserInfoCard {
+  string supplemental_display_name = 1;
+  string icon_path = 2;
+  int32 cross_save_override = 3;
+  repeated enums.BungieMembershipType applicable_membership_types = 4;
+  bool is_public = 5;
+  enums.BungieMembershipType membership_type = 6;
+  int64 membership_id = 7;
+  string display_name = 8;
+  string bungie_global_display_name = 9;
+  int32 bungie_global_display_name_code = 10;
+}
+
+message UserToUserContext {
+  bool is_following = 1;
+  ignores.IgnoreResponse ignore_status = 2;
+  google.protobuf.Timestamp global_ignore_end_date = 3;
+}
+
+message GeneralUser {
+  int64 membership_id = 1;
+  string unique_name = 2;
+  string normalized_name = 3;
+  string display_name = 4;
+  int32 profile_picture = 5;
+  int32 profile_theme = 6;
+  int32 user_title = 7;
+  int64 success_message_flags = 8;
+  bool is_deleted = 9;
+  string about = 10;
+  google.protobuf.Timestamp first_access = 11;
+  google.protobuf.Timestamp last_update = 12;
+  int64 legacy_portal_uid = 13;
+  UserToUserContext context = 14;
+  string psn_display_name = 15;
+  string xbox_display_name = 16;
+  string fb_display_name = 17;
+  bool show_activity = 18;
+  string locale = 19;
+  bool locale_inherit_default = 20;
+  int64 last_ban_report_id = 21;
+  bool show_group_messaging = 22;
+  string profile_picture_path = 23;
+  string profile_picture_wide_path = 24;
+  string profile_theme_name = 25;
+  string user_title_display = 26;
+  string status_text = 27;
+  google.protobuf.Timestamp status_date = 28;
+  google.protobuf.Timestamp profile_ban_expire = 29;
+  string blizzard_display_name = 30;
+  string steam_display_name = 31;
+  string stadia_display_name = 32;
+  string twitch_display_name = 33;
+  string cached_bungie_global_display_name = 34;
+  int32 cached_bungie_global_display_name_code = 35;
+}
+
+service User {
+  rpc GetBungieNetUserByID(MembershipRequest) returns (GeneralUser) {}
+  rpc GetCredentialTypesForTargetAccount(MembershipRequest) returns (CredentialTypesForAccountResponse) {}
+  rpc GetAvailableThemes(google.protobuf.Empty) returns (AvailableThemesResponse) {}
+  rpc GetMembershipDataByID(MembershipDataRequest) returns (UserMembershipData) {}
+  rpc GetMembershipDataForCurrentUser(google.protobuf.Empty) returns (UserMembershipData) {}
+  rpc GetMembershipFromHardLinkedCredential(HardLinkedCredentialRequest) returns (HardLinkedUserMembership) {}
+  rpc SearchByGlobalName(UserSearchRequest) returns (UserSearchResponse) {}
+}
+
+message MembershipRequest {
+  int64 membership_id = 1;
+}
+
+message UserTheme {
+  int32 user_theme_id = 1;
+  string user_theme_name = 2;
+  string user_theme_description = 3;
+}
+
+message AvailableThemesResponse {
+  repeated UserTheme themes = 1;
+}
+
+message CredentialTypesForAccountResponse {
+  message CredentialTypeForAccount {
+    enums.BungieCredentialType credential_type = 1;
+    string credential_display_name = 2;
+    bool is_public = 3;
+    string credential_as_string = 4;
+  }
+  repeated CredentialTypeForAccount credentials = 1;
+}
+
+message MembershipDataRequest {
+  int64 membership_id = 1;
+  enums.BungieMembershipType membership_type = 2;
+}
+
+message UserMembershipData {
+  repeated groups.GroupUserInfoCard destiny_memberships = 1;
+  int64 primary_membership_id = 2;
+  GeneralUser bungie_net_user = 3;
+}
+
+message HardLinkedCredentialRequest {
+  string credential = 1;
+  enums.BungieCredentialType cr_type = 2;
+}
+
+message HardLinkedUserMembership {
+  enums.BungieMembershipType membership_type = 1;
+  int64 membership_id = 2;
+  int32 cross_save_overriden_type = 3;
+  int64 cross_save_overriden_membership_id = 4;
+}
+
+message UserSearchPrefixRequest {
+  string display_name_prefix = 1;
+}
+
+message UserSearchRequest {
+  UserSearchPrefixRequest prefix = 1;
+  int32 page = 2;
+}
+
+message UserSearchResponse {
+  message UserSearchResponseDetail {
+    string bungie_global_display_name = 1;
+    int32 bungie_global_display_name_code = 2;
+    int64 bungie_net_membership_id = 3;
+    repeated UserInfoCard destiny_memberships = 4;
+  }
+
+  repeated UserSearchResponseDetail search_results = 1;
+  int32 page = 2;
+  bool has_more = 3;
+}

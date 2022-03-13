@@ -1,0 +1,19 @@
+syntax = "proto3";
+package ignores;
+
+option go_package = "github.com/paranoiacblack/destiny2/service/ignores";
+
+enum IgnoreStatus {
+  NOT_IGNORED = 0;
+  IGNORED_USER = 1;
+  IGNORED_GROUP = 2;
+  IGNORED_BY_GROUP = 4;
+  IGNORED_POST = 8;
+  IGNORED_TAG = 16;
+  IGNORED_GLOBAL = 32;
+}
+
+message IgnoreResponse {
+  bool is_ignored = 1;
+  IgnoreStatus ignore_flags = 2;
+}

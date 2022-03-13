@@ -1,0 +1,60 @@
+syntax = "proto3";
+package applications;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "protos/enums/enums.proto";
+import "protos/user/user.proto";
+
+option go_package = "github.com/paranoiacblack/destiny2/service/applications";
+
+message UsageRequest {
+  int32 application_id = 1;
+  google.protobuf.Timestamp end = 2;
+  google.protobuf.Timestamp start = 3;
+}
+
+message APIUsage {
+  repeated Series api_calls = 1;
+  repeated Series throttled_requests = 2;
+}
+
+message Series {
+  repeated Datapoint datapoints = 1;
+  string target = 2;
+}
+
+message Datapoint {
+  google.protobuf.Timestamp time = 1;
+  double count = 2;
+}
+
+message ApplicationsResponse {
+  repeated Application applications = 1;
+}
+
+message Application {
+  int32 application_id = 1;
+  string name = 2;
+  string redirect_url = 3;
+  string link = 4;
+  int64 scope = 5; // Compare scope to ApplicationScope in service package.
+  string origin = 6;
+  enums.ApplicationStatus status = 7;
+  google.protobuf.Timestamp creation_date = 8;
+  google.protobuf.Timestamp status_changed = 9;
+  google.protobuf.Timestamp first_published = 10;
+  repeated ApplicationDeveloper team = 11;
+  string override_authorize_view_name = 12;
+}
+
+message ApplicationDeveloper {
+  enums.DeveloperRole role = 1;
+  int32 api_eula_version = 2;
+  user.UserInfoCard user = 3;
+}
+
+service App {
+  rpc GetApplicationAPIUsage(UsageRequest) returns (APIUsage) {}
+  rpc GetBungieApplications(google.protobuf.Empty) returns (ApplicationsResponse) {}
+}
