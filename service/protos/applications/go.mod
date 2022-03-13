@@ -1,3 +1,3 @@
-module github.com/paranoiacblack/destiny2/protos/applications
+module github.com/paranoiacblack/destiny2/service/protos/applications
 
 go 1.16
