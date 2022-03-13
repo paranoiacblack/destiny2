@@ -1,4 +1,4 @@
-module github.com/paranoiacblack/destiny2/service/enums
+module github.com/paranoiacblack/destiny2/service/protos/enums
 
 go 1.16
 

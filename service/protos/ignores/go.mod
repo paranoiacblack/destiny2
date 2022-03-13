@@ -1,4 +1,4 @@
-module github.com/paranoiacblack/destiny2/service/ignores
+module github.com/paranoiacblack/destiny2/service/protos/ignores
 
 go 1.16
 

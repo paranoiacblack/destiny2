@@ -1,3 +1,3 @@
-module github.com/paranoiacblack/destiny2/service/groups
+module github.com/paranoiacblack/destiny2/service/protos/groups
 
 go 1.16
