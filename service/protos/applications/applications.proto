@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 import "protos/enums/enums.proto";
 import "protos/user/user.proto";
 
-option go_package = "github.com/paranoiacblack/destiny2/service/applications";
+option go_package = "github.com/paranoiacblack/destiny2/service/protos/applications";
 
 message UsageRequest {
   int32 application_id = 1;

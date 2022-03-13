@@ -3,7 +3,7 @@ package groups;
 
 import "protos/enums/enums.proto";
 
-option go_package = "github.com/paranoiacblack/destiny2/service/groups";
+option go_package = "github.com/paranoiacblack/destiny2/service/protos/groups";
 
 message GroupUserInfoCard {
   string last_seen_display_name = 1;
